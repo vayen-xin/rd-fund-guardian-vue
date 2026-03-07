@@ -5,10 +5,11 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
+    "build:check": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "electron:build": "vue-tsc && vite build && electron-builder",
+    "electron:build": "vite build && electron-builder",
     "electron:serve": "vite && electron ."
   },
   "dependencies": {
