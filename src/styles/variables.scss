@@ -1,13 +1,37 @@
 // 全局样式变量
 
-// 颜色
+// 主题色
 $primary-color: #2563EB;
 $success-color: #10B981;
 $warning-color: #F59E0B;
 $error-color: #EF4444;
 $info-color: #3B82F6;
 
-// 中性色
+// 浅色模式（默认）
+:root {
+  --bg-color: #F9FAFB;
+  --bg-white: #FFFFFF;
+  --border-color: #E5E7EB;
+  --text-primary: #1F2937;
+  --text-regular: #4B5563;
+  --text-secondary: #6B7280;
+  --sidebar-bg: #1f2937;
+  --sidebar-text: #9ca3af;
+}
+
+// 暗黑模式（预留）
+html.dark {
+  --bg-color: #111827;
+  --bg-white: #1F2937;
+  --border-color: #374151;
+  --text-primary: #F9FAFB;
+  --text-regular: #D1D5DB;
+  --text-secondary: #9CA3AF;
+  --sidebar-bg: #0F172A;
+  --sidebar-text: #64748B;
+}
+
+// 兼容旧变量（逐步迁移到 CSS 变量）
 $bg-color: #F9FAFB;
 $border-color: #E5E7EB;
 $text-primary: #1F2937;

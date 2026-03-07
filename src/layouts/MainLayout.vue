@@ -37,6 +37,14 @@
         </div>
         
         <div class="header-right">
+          <!-- 主题切换 -->
+          <el-button
+            text
+            :icon="appStore.isDark ? 'Sunny' : 'Moon'"
+            @click="appStore.toggleTheme"
+            title="切换主题"
+          />
+          
           <span class="username">{{ userStore.userInfo?.username || '用户' }}</span>
           <el-dropdown @command="handleCommand">
             <el-avatar :size="32" icon="User" />
@@ -66,11 +74,13 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { useAppStore } from '@/stores/app'
 import { logout as logoutApi } from '@/api/auth'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const appStore = useAppStore()
 
 const activeMenu = computed(() => route.path)
 const currentRoute = computed(() => route.matched[route.matched.length - 1])

@@ -8,6 +8,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import App from './App.vue'
 import router from './router'
+import { useAppStore } from './stores/app'
 import './styles/index.scss'
 
 const app = createApp(App)
@@ -26,5 +27,9 @@ app.use(router)
 app.use(ElementPlus, {
   locale: zhCn,
 })
+
+// 初始化主题
+const appStore = useAppStore()
+appStore.initTheme()
 
 app.mount('#app')

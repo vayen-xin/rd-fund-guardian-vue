@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
+    <!-- 统计卡片 -->
     <el-row :gutter="24">
-      <!-- 统计卡片 -->
       <el-col :span="6">
         <el-card class="stat-card">
           <div class="stat-content">
@@ -55,6 +55,27 @@
               <div class="stat-label">设备总数</div>
             </div>
           </div>
+        </el-card>
+      </el-col>
+    </el-row>
+    
+    <!-- 图表区域 -->
+    <el-row :gutter="24" style="margin-top: 24px;">
+      <el-col :span="12">
+        <el-card>
+          <template #header>
+            <span>项目资金分布</span>
+          </template>
+          <div ref="pieChartRef" class="chart"></div>
+        </el-card>
+      </el-col>
+      
+      <el-col :span="12">
+        <el-card>
+          <template #header>
+            <span>月度费用趋势</span>
+          </template>
+          <div ref="lineChartRef" class="chart"></div>
         </el-card>
       </el-col>
     </el-row>
@@ -124,8 +145,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import * as echarts from 'echarts'
 
+const pieChartRef = ref<HTMLElement>()
+const lineChartRef = ref<HTMLElement>()
 const recentProjects = ref([
   { id: 1, name: 'AI 算法研发', startTime: '2026-02-01', status: '进行中' },
   { id: 2, name: '数据分析平台', startTime: '2026-02-15', status: '进行中' }
@@ -139,6 +163,56 @@ const getStatusType = (status: string) => {
   }
   return types[status] || ''
 }
+
+// 初始化图表
+onMounted(() => {
+  // 饼图
+  if (pieChartRef.value) {
+    const pieChart = echarts.init(pieChartRef.value)
+    pieChart.setOption({
+      tooltip: { trigger: 'item' },
+      legend: { top: '5%', left: 'center' },
+      series: [{
+        type: 'pie',
+        radius: ['40%', '70%'],
+        data: [
+          { value: 1048, name: '人工费用' },
+          { value: 735, name: '直接投入' },
+          { value: 580, name: '折旧费用' },
+          { value: 484, name: '其他费用' }
+        ]
+      }]
+    })
+  }
+  
+  // 折线图
+  if (lineChartRef.value) {
+    const lineChart = echarts.init(lineChartRef.value)
+    lineChart.setOption({
+      tooltip: { trigger: 'axis' },
+      xAxis: {
+        type: 'category',
+        data: ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月']
+      },
+      yAxis: {
+        type: 'value',
+        name: '金额（元）'
+      },
+      series: [{
+        data: [820, 932, 901, 934, 1290, 1330],
+        type: 'line',
+        smooth: true,
+        areaStyle: {}
+      }]
+    })
+  }
+  
+  // 响应式
+  window.addEventListener('resize', () => {
+    pieChartRef.value && echarts.getInstanceByDom(pieChartRef.value)?.resize()
+    lineChartRef.value && echarts.getInstanceByDom(lineChartRef.value)?.resize()
+  })
+})
 </script>
 
 <style scoped lang="scss">
@@ -174,6 +248,11 @@ const getStatusType = (status: string) => {
       }
     }
   }
+}
+
+.chart {
+  height: 300px;
+  width: 100%;
 }
 
 .card-header {
