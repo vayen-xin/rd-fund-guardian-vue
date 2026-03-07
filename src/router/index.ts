@@ -81,10 +81,15 @@ const router = createRouter({
   routes
 })
 
-// 路由守卫
+// 路由守卫（临时关闭验证，方便测试 UI）
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
+  // const token = localStorage.getItem('token')
   
+  // 临时关闭验证，允许直接访问
+  next()
+  
+  // 原始逻辑（暂时注释）
+  /*
   if (to.path !== '/login' && !token) {
     next('/login')
   } else if (to.path === '/login' && token) {
@@ -92,6 +97,7 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
+  */
 })
 
 export default router

@@ -85,6 +85,7 @@
             :loading="loading"
             class="login-btn"
             @click="handleLogin"
+            style="height: 44px; font-size: 16px;"
           >
             登录
           </el-button>
@@ -133,8 +134,13 @@ const handleLogin = async () => {
     if (valid) {
       loading.value = true
       try {
-        const res = await login(loginForm)
-        userStore.setToken(res.data.token)
+        // 临时关闭验证，直接跳转
+        // const res = await login(loginForm)
+        // userStore.setToken(res.data.token)
+        
+        // 临时设置 token，方便测试
+        userStore.setToken('test-token-123456')
+        
         ElMessage.success('登录成功')
         router.push('/')
       } catch (error: any) {
