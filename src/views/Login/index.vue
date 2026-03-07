@@ -2,38 +2,47 @@
   <div class="login-container">
     <!-- 左侧品牌区 -->
     <div class="login-left">
-      <div class="brand-header">
-        <div class="logo">
-          <span>研发费用合规智能管理桌面系统</span>
-        </div>
-      </div>
-      
       <div class="brand-content">
+        <div class="brand-logo">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M4 24C4 12.9543 12.9543 4 24 4V4C35.0457 4 44 12.9543 44 24V24C44 35.0457 35.0457 44 24 44V44C12.9543 44 4 35.0457 4 24V24Z" fill="#272B30"/>
+            <rect x="14" y="20" width="4" height="8" rx="2" fill="white"/>
+            <rect x="22" y="18" width="4" height="12" rx="2" fill="url(#grad1)"/>
+            <rect x="30" y="20" width="4" height="8" rx="2" fill="white"/>
+            <defs>
+              <linearGradient id="grad1" x1="24" y1="18" x2="24" y2="30" gradientUnits="userSpaceOnUse">
+                <stop stop-color="white"/>
+                <stop offset="1" stop-color="#D0D0D0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <h1 class="brand-title">研发费用合规<br/>智能管理系统</h1>
+        
         <div class="brand-image">
-          <div class="image-placeholder">
+          <div class="illustration">
             <div class="mountain"></div>
             <div class="sun"></div>
           </div>
         </div>
         
-        <h1 class="brand-title">智能管理</h1>
-        
         <ul class="brand-features">
           <li>
-            <el-icon class="feature-icon"><CircleCheck /></el-icon>
-            <span>轻量高效</span>
+            <span class="feature-icon">✓</span>
+            <span>轻量高效 - 聚焦核心统计场景</span>
           </li>
           <li>
-            <el-icon class="feature-icon"><CircleCheck /></el-icon>
-            <span>审计友好</span>
+            <span class="feature-icon">✓</span>
+            <span>审计友好 - 结算即生成完整审计包</span>
           </li>
           <li>
-            <el-icon class="feature-icon"><CircleCheck /></el-icon>
-            <span>政策对齐</span>
+            <span class="feature-icon">✓</span>
+            <span>政策对齐 - 严格遵循高企八类费用口径</span>
           </li>
           <li>
-            <el-icon class="feature-icon"><CircleCheck /></el-icon>
-            <span>责任可溯</span>
+            <span class="feature-icon">✓</span>
+            <span>责任可溯 - 全操作留痕快速定位</span>
           </li>
         </ul>
       </div>
@@ -41,59 +50,56 @@
     
     <!-- 右侧登录表单 -->
     <div class="login-right">
-      <div class="login-header">
-        <h1>登录</h1>
-        <p>欢迎回来，请输入您的账号信息</p>
-      </div>
-      
-      <el-form
-        ref="formRef"
-        :model="loginForm"
-        :rules="rules"
-        class="login-form"
-        @keyup.enter="handleLogin"
-      >
-        <el-form-item prop="username">
-          <el-input
-            v-model="loginForm.username"
-            placeholder="请输入您的账号"
-            size="large"
-            prefix-icon="Message"
-            clearable
-          />
-        </el-form-item>
+      <div class="login-box">
+        <div class="login-header">
+          <h2>欢迎回来</h2>
+          <p>请输入您的账号信息以登录系统</p>
+        </div>
         
-        <el-form-item prop="password">
-          <el-input
-            v-model="loginForm.password"
-            type="password"
-            placeholder="请输入您的密码"
-            size="large"
-            prefix-icon="Lock"
-            show-password
-          >
-            <template #suffix>
-              <a href="javascript:void(0)" class="forgot-password">忘记密码？</a>
-            </template>
-          </el-input>
-        </el-form-item>
+        <el-form
+          ref="formRef"
+          :model="loginForm"
+          :rules="rules"
+          class="login-form"
+          @keyup.enter="handleLogin"
+        >
+          <el-form-item prop="username">
+            <el-input
+              v-model="loginForm.username"
+              placeholder="请输入账号"
+              size="large"
+              prefix-icon="Message"
+              clearable
+            />
+          </el-form-item>
+          
+          <el-form-item prop="password">
+            <el-input
+              v-model="loginForm.password"
+              type="password"
+              placeholder="请输入密码"
+              size="large"
+              prefix-icon="Lock"
+              show-password
+            />
+          </el-form-item>
+          
+          <el-form-item>
+            <el-button
+              type="primary"
+              size="large"
+              :loading="loading"
+              class="login-btn"
+              @click="handleLogin"
+            >
+              登录
+            </el-button>
+          </el-form-item>
+        </el-form>
         
-        <el-form-item>
-          <el-button
-            type="primary"
-            size="large"
-            :loading="loading"
-            class="login-btn"
-            @click="handleLogin"
-            style="height: 44px; font-size: 16px;"
-          >
-            登录
-          </el-button>
-        </el-form-item>
-      </el-form>
-      
-      <div class="login-footer">
-        <p class="tips">需要新建账号请联系系统管理员</p>
+        <div class="login-footer">
+          <p>需要新建账号请联系系统管理员</p>
+        </div>
       </div>
     </div>
   </div>
@@ -104,7 +110,6 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-import { login } from '@/api/auth'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -134,21 +139,12 @@ const handleLogin = async () => {
     if (valid) {
       loading.value = true
       try {
-        // 临时关闭验证，直接跳转
-        // const res = await login(loginForm)
-        // userStore.setToken(res.data.token)
-        
-        // 临时设置 token，方便测试
+        // 临时设置 token，方便测试 UI
         userStore.setToken('test-token-123456')
-        
         ElMessage.success('登录成功')
         router.push('/')
       } catch (error: any) {
         console.error('登录失败:', error)
-        // 如果是网络错误，给个友好提示
-        if (error.message?.includes('Network Error') || error.message?.includes('Failed to fetch')) {
-          ElMessage.error('后端服务未启动，请联系管理员')
-        }
       } finally {
         loading.value = false
       }
@@ -162,53 +158,43 @@ const handleLogin = async () => {
   width: 100%;
   height: 100vh;
   display: flex;
-  background: #ffffff;
+  background: #f4f4f4;
 }
 
 // 左侧品牌区
 .login-left {
   width: 480px;
-  background: #f9fafb;
+  background: #fcfcfc;
   display: flex;
-  flex-direction: column;
-  border-right: 1px solid #e5e7eb;
-  
-  .brand-header {
-    padding: 24px 32px;
-    
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #1f2937;
-      
-      &::before {
-        content: '';
-        width: 32px;
-        height: 32px;
-        background: #1f2937;
-        border-radius: 8px;
-        display: inline-block;
-      }
-    }
-  }
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border-right: 1px solid #f4f4f4;
   
   .brand-content {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 48px 32px;
+    
+    .brand-logo {
+      margin-bottom: 24px;
+    }
+    
+    .brand-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #272b30;
+      line-height: 1.4;
+      text-align: center;
+      margin-bottom: 40px;
+    }
     
     .brand-image {
       width: 280px;
       height: 200px;
-      margin-bottom: 48px;
+      margin-bottom: 40px;
       
-      .image-placeholder {
+      .illustration {
         width: 100%;
         height: 100%;
         background: linear-gradient(180deg, #e0f2fe 0%, #fff 100%);
@@ -225,17 +211,6 @@ const handleLogin = async () => {
           background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
           border-radius: 120px 120px 0 0;
           position: relative;
-          
-          &::after {
-            content: '';
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            width: 20px;
-            height: 20px;
-            background: #fbbf24;
-            border-radius: 50%;
-          }
         }
         
         .sun {
@@ -250,13 +225,6 @@ const handleLogin = async () => {
       }
     }
     
-    .brand-title {
-      font-size: 28px;
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 32px;
-    }
-    
     .brand-features {
       list-style: none;
       padding: 0;
@@ -267,12 +235,13 @@ const handleLogin = async () => {
         align-items: center;
         gap: 12px;
         margin-bottom: 16px;
-        font-size: 15px;
-        color: #4b5563;
+        font-size: 14px;
+        color: #272b30;
         
         .feature-icon {
-          color: #10b981;
-          font-size: 18px;
+          color: #0d9f5f;
+          font-size: 16px;
+          font-weight: bold;
         }
       }
     }
@@ -283,51 +252,46 @@ const handleLogin = async () => {
 .login-right {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px;
+  padding: 40px;
+  
+  .login-box {
+    width: 100%;
+    max-width: 400px;
+    background: #fcfcfc;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
   
   .login-header {
     text-align: center;
-    margin-bottom: 48px;
+    margin-bottom: 32px;
     
-    h1 {
-      font-size: 32px;
+    h2 {
+      font-size: 24px;
       font-weight: 600;
-      color: #1f2937;
+      color: #272b30;
       margin-bottom: 8px;
     }
     
     p {
       font-size: 14px;
-      color: #9ca3af;
+      color: #9a9fa5;
     }
   }
   
   .login-form {
-    width: 100%;
-    max-width: 400px;
-    
     .el-form-item {
-      margin-bottom: 24px;
-    }
-    
-    .forgot-password {
-      font-size: 13px;
-      color: #3b82f6;
-      text-decoration: none;
-      
-      &:hover {
-        text-decoration: underline;
-      }
+      margin-bottom: 20px;
     }
     
     .login-btn {
       width: 100%;
-      margin-top: 16px;
       height: 44px;
       font-size: 16px;
+      margin-top: 8px;
     }
   }
   
@@ -335,9 +299,9 @@ const handleLogin = async () => {
     margin-top: 24px;
     text-align: center;
     
-    .tips {
+    p {
       font-size: 13px;
-      color: #9ca3af;
+      color: #9a9fa5;
     }
   }
 }
@@ -346,10 +310,6 @@ const handleLogin = async () => {
 @media (max-width: 1024px) {
   .login-left {
     display: none;
-  }
-  
-  .login-right {
-    padding: 24px;
   }
 }
 </style>
