@@ -17,7 +17,25 @@ const routes: RouteRecordRaw[] = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/Dashboard/index.vue'),
-        meta: { title: '工作台', icon: 'DataAnalysis' }
+        meta: { title: '首页', icon: 'DataAnalysis' }
+      },
+      {
+        path: 'personnel',
+        name: 'Personnel',
+        component: () => import('@/views/Personnel/index.vue'),
+        meta: { title: '人员管理', icon: 'User' }
+      },
+      {
+        path: 'equipment',
+        name: 'Equipment',
+        component: () => import('@/views/Equipment/index.vue'),
+        meta: { title: '设备管理', icon: 'Monitor' }
+      },
+      {
+        path: 'attendance',
+        name: 'Attendance',
+        component: () => import('@/views/Attendance/index.vue'),
+        meta: { title: '打卡记录导入', icon: 'Document' }
       },
       {
         path: 'projects',
@@ -41,6 +59,12 @@ const routes: RouteRecordRaw[] = [
             meta: { title: '创建项目' }
           },
           {
+            path: 'pending-settlement',
+            name: 'PendingSettlement',
+            component: () => import('@/views/Projects/PendingSettlement.vue'),
+            meta: { title: '待结算项目' }
+          },
+          {
             path: ':id',
             name: 'ProjectDetail',
             component: () => import('@/views/Projects/Detail.vue'),
@@ -55,22 +79,16 @@ const routes: RouteRecordRaw[] = [
         ]
       },
       {
-        path: 'employees',
-        name: 'Employees',
-        component: () => import('@/views/Employees/index.vue'),
-        meta: { title: '员工管理', icon: 'User' }
-      },
-      {
-        path: 'equipment',
-        name: 'Equipment',
-        component: () => import('@/views/Equipment/index.vue'),
-        meta: { title: '设备管理', icon: 'Monitor' }
-      },
-      {
-        path: 'logs',
-        name: 'Logs',
-        component: () => import('@/views/Logs/index.vue'),
+        path: 'operation-log',
+        name: 'OperationLog',
+        component: () => import('@/views/OperationLog/index.vue'),
         meta: { title: '操作日志', icon: 'Document' }
+      },
+      {
+        path: 'accounts',
+        name: 'Accounts',
+        component: () => import('@/views/Accounts/index.vue'),
+        meta: { title: '账号管理', icon: 'Setting' }
       }
     ]
   }
