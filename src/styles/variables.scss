@@ -1,56 +1,131 @@
-// 全局样式变量
+// 全局样式变量 - 根据 Figma 设计稿优化
 
-// 主题色
-$primary-color: #2563EB;
-$success-color: #10B981;
-$warning-color: #F59E0B;
-$error-color: #EF4444;
-$info-color: #3B82F6;
+// 主题色（根据设计稿）
+$primary-color: #272B30;  // 深灰黑 - 主色
+$success-color: #0d9f5f;  // 绿色
+$warning-color: #d48806;  // 黄色
+$danger-color: #c2185b;   // 粉色/红色
+
+// 中性色
+$neutral-100: #fcfcfc;  // 最浅背景
+$neutral-200: #f4f4f4;  // 次级背景
+$neutral-300: #efefef;  // 悬停背景
+$neutral-400: #e0e0e0;  // 边框
+$neutral-500: #9a9fa5;  // 提示文字
+$neutral-600: #6f767e;  // 次级文字
+$neutral-700: #272b30;  // 主文字
+
+// 功能色
+$primary: #272B30;
+$success: #0d9f5f;
+$warning: #d48806;
+$danger: #c2185b;
+$info: #3b5bdb;
 
 // 浅色模式（默认）
 :root {
-  --bg-color: #F9FAFB;
-  --bg-white: #FFFFFF;
-  --border-color: #E5E7EB;
-  --text-primary: #1F2937;
-  --text-regular: #4B5563;
-  --text-secondary: #6B7280;
-  --sidebar-bg: #1f2937;
-  --sidebar-text: #9ca3af;
+  // 背景色
+  --bg-primary: #fcfcfc;
+  --bg-secondary: #f4f4f4;
+  --bg-tertiary: #efefef;
+  --bg-white: #ffffff;
+  
+  // 边框色
+  --border-light: #efefef;
+  --border-default: #f4f4f4;
+  --border-dark: #e0e0e0;
+  
+  // 文字色
+  --text-primary: #272b30;
+  --text-secondary: #6f767e;
+  --text-hint: #9a9fa5;
+  
+  // 侧边栏
+  --sidebar-bg: #fcfcfc;
+  --sidebar-text: #6f767e;
+  --sidebar-text-active: #272b30;
+  --sidebar-hover: #f4f4f4;
+  --sidebar-active: #efefef;
+  
+  // 阴影
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+  
+  // 圆角
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  
+  // 间距
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 32px;
+  --spacing-4xl: 40px;
+  
+  // 字体大小
+  --font-xs: 11px;
+  --font-sm: 12px;
+  --font-md: 13px;
+  --font-lg: 14px;
+  --font-xl: 16px;
+  --font-2xl: 18px;
+  --font-3xl: 20px;
+  --font-4xl: 24px;
+  --font-5xl: 32px;
 }
 
 // 暗黑模式（预留）
 html.dark {
-  --bg-color: #111827;
-  --bg-white: #1F2937;
-  --border-color: #374151;
-  --text-primary: #F9FAFB;
-  --text-regular: #D1D5DB;
-  --text-secondary: #9CA3AF;
-  --sidebar-bg: #0F172A;
-  --sidebar-text: #64748B;
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2a2a2a;
+  --bg-white: #1f1f1f;
+  
+  --border-light: #2a2a2a;
+  --border-default: #333333;
+  --border-dark: #404040;
+  
+  --text-primary: #fcfcfc;
+  --text-secondary: #9a9fa5;
+  --text-hint: #6f767e;
+  
+  --sidebar-bg: #1a1a1a;
+  --sidebar-text: #9a9fa5;
+  --sidebar-text-active: #fcfcfc;
+  --sidebar-hover: #242424;
+  --sidebar-active: #2a2a2a;
 }
 
 // 兼容旧变量（逐步迁移到 CSS 变量）
-$bg-color: #F9FAFB;
-$border-color: #E5E7EB;
-$text-primary: #1F2937;
-$text-regular: #4B5563;
-$text-secondary: #6B7280;
+$bg-color: var(--bg-primary);
+$border-color: var(--border-default);
+$text-primary: var(--text-primary);
+$text-regular: var(--text-secondary);
+$text-secondary: var(--text-hint);
 
-// 间距
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
+// 间距变量
+$spacing-xs: var(--spacing-xs);
+$spacing-sm: var(--spacing-sm);
+$spacing-md: var(--spacing-md);
+$spacing-lg: var(--spacing-lg);
+$spacing-xl: var(--spacing-xl);
+$spacing-2xl: var(--spacing-2xl);
+$spacing-3xl: var(--spacing-3xl);
+$spacing-4xl: var(--spacing-4xl);
 
-// 圆角
-$border-radius-sm: 4px;
-$border-radius-md: 8px;
-$border-radius-lg: 12px;
+// 圆角变量
+$border-radius-sm: var(--radius-sm);
+$border-radius-md: var(--radius-md);
+$border-radius-lg: var(--radius-lg);
+$border-radius-xl: var(--radius-xl);
 
-// 阴影
-$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+// 阴影变量
+$shadow-sm: var(--shadow-sm);
+$shadow-md: var(--shadow-md);
+$shadow-lg: var(--shadow-lg);
