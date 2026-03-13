@@ -8,7 +8,7 @@
       </div>
       <div class="header-right">
         <button class="btn btn-primary" @click="handleAdd">
-          <span class="icon">+</span>
+          <span class="btn-icon">+</span>
           添加人员
         </button>
       </div>
@@ -22,11 +22,11 @@
       </div>
       <div class="filter-actions">
         <button class="btn btn-outline">
-          <span class="icon">⬆</span>
+          <span class="btn-icon">⬆</span>
           批量导入
         </button>
         <button class="btn btn-primary" @click="handleAdd">
-          <span class="icon">+</span>
+          <span class="btn-icon">+</span>
           添加人员
         </button>
       </div>
@@ -192,8 +192,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-outline" @click="dialogVisible = false">取消</button>
-          <button class="btn btn-primary" @click="handleSubmit">确认</button>
+          <button type="button" class="btn btn-outline" @click="dialogVisible = false">取消</button>
+          <button type="submit" class="btn btn-primary" @click="handleSubmit">确认</button>
         </div>
       </div>
     </div>
@@ -291,8 +291,9 @@ const handleSubmit = () => {
 
 <style scoped lang="scss">
 .personnel-page {
-  padding: var(--spacing-4xl);
+  padding: 40px;
   min-height: calc(100vh - 80px);
+  background: #f4f4f4;
 }
 
 // 页面头部
@@ -300,19 +301,19 @@ const handleSubmit = () => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--spacing-3xl);
+  margin-bottom: 32px;
 
   .header-left {
     .page-title {
-      font-size: var(--font-4xl);
+      font-size: 30px;
       font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--spacing-sm);
+      color: #272b30;
+      margin: 0 0 8px 0;
     }
 
     .page-subtitle {
-      font-size: var(--font-md);
-      color: var(--text-secondary);
+      font-size: 14px;
+      color: #9a9fa5;
       margin: 0;
     }
   }
@@ -324,35 +325,35 @@ const handleSubmit = () => {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  font-size: var(--font-md);
+  font-size: 14px;
   font-weight: 500;
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
 
-  .icon {
+  .btn-icon {
     font-size: 16px;
     font-weight: bold;
   }
 
   &.btn-primary {
-    background: var(--primary);
+    background: #252833;
     color: white;
 
     &:hover {
-      background: var(--primary-hover);
+      background: #3d4152;
     }
   }
 
   &.btn-outline {
     background: white;
-    color: var(--text-primary);
-    border: 1px solid var(--border-dark);
+    color: #272b30;
+    border: 1px solid #d9d9d9;
 
     &:hover {
-      border-color: var(--primary);
-      color: var(--primary);
+      border-color: #252833;
+      color: #252833;
     }
   }
 }
@@ -360,19 +361,19 @@ const handleSubmit = () => {
 .btn-link {
   background: none;
   border: none;
-  color: var(--info);
+  color: #1890ff;
   cursor: pointer;
-  font-size: var(--font-md);
+  font-size: 14px;
   padding: 4px 8px;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   transition: all 0.2s;
 
   &:hover {
-    background: var(--bg-secondary);
+    background: #f5f5f5;
   }
 
   &.btn-delete {
-    color: var(--danger);
+    color: #ff4d4f;
 
     &:hover {
       background: #fff1f0;
@@ -382,11 +383,11 @@ const handleSubmit = () => {
 
 // 筛选卡片
 .filter-card {
-  background: var(--bg-white);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  margin-bottom: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -394,31 +395,31 @@ const handleSubmit = () => {
   .filter-header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: 12px;
 
     .filter-title {
-      font-size: var(--font-lg);
+      font-size: 16px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #272b30;
       margin: 0;
     }
 
     .filter-count {
-      font-size: var(--font-sm);
-      color: var(--text-hint);
-      background: var(--bg-secondary);
+      font-size: 13px;
+      color: #9a9fa5;
+      background: #f5f5f5;
       padding: 2px 8px;
-      border-radius: var(--radius-md);
+      border-radius: 6px;
     }
   }
 }
 
 // 表格卡片
 .table-card {
-  background: var(--bg-white);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  box-shadow: var(--shadow-sm);
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .data-table {
@@ -427,23 +428,23 @@ const handleSubmit = () => {
 
   th {
     text-align: left;
-    padding: var(--spacing-lg) var(--spacing-md);
-    font-size: var(--font-sm);
+    padding: 16px 12px;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border-light);
-    background: var(--bg-secondary);
+    color: #595959;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
   }
 
   td {
-    padding: var(--spacing-lg) var(--spacing-md);
-    font-size: var(--font-md);
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-light);
+    padding: 16px 12px;
+    font-size: 14px;
+    color: #272b30;
+    border-bottom: 1px solid #f0f0f0;
   }
 
   tr:hover td {
-    background: var(--bg-secondary);
+    background: #f5f5f5;
   }
 
   .font-bold {
@@ -453,8 +454,8 @@ const handleSubmit = () => {
   .gender-tag {
     display: inline-block;
     padding: 2px 8px;
-    border-radius: var(--radius-md);
-    font-size: var(--font-sm);
+    border-radius: 6px;
+    font-size: 13px;
 
     &.male {
       background: #e6f4ff;
@@ -470,8 +471,8 @@ const handleSubmit = () => {
   .type-tag {
     display: inline-block;
     padding: 2px 8px;
-    border-radius: var(--radius-md);
-    font-size: var(--font-sm);
+    border-radius: 6px;
+    font-size: 13px;
 
     &.type-formal {
       background: #f6ffed;
@@ -491,7 +492,7 @@ const handleSubmit = () => {
 
   .actions {
     display: flex;
-    gap: var(--spacing-xs);
+    gap: 4px;
   }
 }
 
@@ -500,26 +501,26 @@ const handleSubmit = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: var(--spacing-2xl);
-  padding-top: var(--spacing-2xl);
-  border-top: 1px solid var(--border-light);
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
 
   .pagination-info {
-    font-size: var(--font-sm);
-    color: var(--text-secondary);
+    font-size: 13px;
+    color: #595959;
   }
 
   .pagination-controls {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 8px;
 
     .page-size {
       padding: 4px 8px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      font-size: var(--font-sm);
-      color: var(--text-primary);
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #272b30;
       background: white;
     }
 
@@ -529,17 +530,17 @@ const handleSubmit = () => {
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
       background: white;
       cursor: pointer;
-      font-size: var(--font-sm);
-      color: var(--text-primary);
+      font-size: 13px;
+      color: #272b30;
       transition: all 0.2s;
 
       &:hover:not(:disabled) {
-        border-color: var(--primary);
-        color: var(--primary);
+        border-color: #252833;
+        color: #252833;
       }
 
       &:disabled {
@@ -555,25 +556,25 @@ const handleSubmit = () => {
       min-width: 32px;
       height: 32px;
       padding: 0 8px;
-      background: var(--primary);
+      background: #252833;
       color: white;
-      border-radius: var(--radius-md);
-      font-size: var(--font-sm);
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: 500;
     }
 
     .page-info {
-      font-size: var(--font-sm);
-      color: var(--text-secondary);
+      font-size: 13px;
+      color: #595959;
     }
 
     .page-input {
       width: 50px;
       padding: 4px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
       text-align: center;
-      font-size: var(--font-sm);
+      font-size: 13px;
     }
   }
 }
@@ -585,7 +586,7 @@ const handleSubmit = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--bg-overlay);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -593,26 +594,26 @@ const handleSubmit = () => {
 }
 
 .modal {
-  background: var(--bg-white);
-  border-radius: var(--radius-xl);
+  background: white;
+  border-radius: 12px;
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
   overflow: auto;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-2xl);
-  border-bottom: 1px solid var(--border-light);
+  padding: 24px;
+  border-bottom: 1px solid #f0f0f0;
 
   .modal-title {
-    font-size: var(--font-2xl);
+    font-size: 18px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: #272b30;
     margin: 0;
   }
 
@@ -620,7 +621,7 @@ const handleSubmit = () => {
     background: none;
     border: none;
     font-size: 28px;
-    color: var(--text-hint);
+    color: #9a9fa5;
     cursor: pointer;
     padding: 0;
     width: 32px;
@@ -628,26 +629,26 @@ const handleSubmit = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
+    border-radius: 6px;
     transition: all 0.2s;
 
     &:hover {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
+      background: #f5f5f5;
+      color: #272b30;
     }
   }
 }
 
 .modal-body {
-  padding: var(--spacing-2xl);
+  padding: 24px;
 }
 
 .form {
   .form-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-2xl);
-    margin-bottom: var(--spacing-2xl);
+    gap: 24px;
+    margin-bottom: 24px;
 
     &:last-child {
       margin-bottom: 0;
@@ -657,13 +658,13 @@ const handleSubmit = () => {
   .form-group {
     .form-label {
       display: block;
-      font-size: var(--font-md);
-      color: var(--text-primary);
-      margin-bottom: var(--spacing-sm);
+      font-size: 14px;
+      color: #272b30;
+      margin-bottom: 8px;
       font-weight: 500;
 
       .required {
-        color: var(--danger);
+        color: #ff4d4f;
         margin-right: 2px;
       }
     }
@@ -672,32 +673,32 @@ const handleSubmit = () => {
     .form-select {
       width: 100%;
       padding: 8px 12px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      font-size: var(--font-md);
-      color: var(--text-primary);
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #272b30;
       background: white;
       transition: all 0.2s;
 
       &:focus {
         outline: none;
-        border-color: var(--primary);
+        border-color: #252833;
         box-shadow: 0 0 0 2px rgba(37, 40, 51, 0.1);
       }
 
       &::placeholder {
-        color: var(--text-hint);
+        color: #9a9fa5;
       }
     }
 
     .radio-group {
       display: flex;
-      gap: var(--spacing-lg);
+      gap: 16px;
 
       .radio-label {
         display: flex;
         align-items: center;
-        gap: var(--spacing-sm);
+        gap: 8px;
         cursor: pointer;
 
         input[type="radio"] {
@@ -707,8 +708,8 @@ const handleSubmit = () => {
         }
 
         .radio-text {
-          font-size: var(--font-md);
-          color: var(--text-primary);
+          font-size: 14px;
+          color: #272b30;
         }
       }
     }
@@ -718,8 +719,8 @@ const handleSubmit = () => {
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: var(--spacing-md);
-  padding: var(--spacing-2xl);
-  border-top: 1px solid var(--border-light);
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid #f0f0f0;
 }
 </style>
