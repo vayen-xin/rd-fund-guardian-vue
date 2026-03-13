@@ -2,470 +2,516 @@
   <div class="project-list-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <div class="header-left">
-        <h1 class="page-title">项目管理</h1>
-        <span class="page-subtitle">创建和管理研发项目，跟踪项目进度</span>
-      </div>
-      <div class="header-right">
-        <router-link to="/projects/create">
-          <el-button type="primary" icon="Plus">
-            创建项目
-          </el-button>
-        </router-link>
-      </div>
+      <h1 class="page-title">项目列表</h1>
     </div>
 
-    <!-- 筛选条件 -->
+    <!-- 筛选区域 -->
     <div class="filter-card">
-      <el-form :inline="true" :model="filterForm" class="filter-form">
-        <el-form-item label="项目状态">
-          <el-select v-model="filterForm.status" placeholder="全部状态" clearable style="width: 140px">
-            <el-option label="进行中" value="ongoing" />
-            <el-option label="已结束" value="ended" />
-            <el-option label="已结算" value="settled" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="开始日期">
-          <el-date-picker
-            v-model="filterForm.startDate"
-            type="date"
-            placeholder="选择开始日期"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-            style="width: 160px"
-          />
-        </el-form-item>
-        <el-form-item label="至">
-          <el-date-picker
-            v-model="filterForm.endDate"
-            type="date"
-            placeholder="选择结束日期"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-            style="width: 160px"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </el-form-item>
-      </el-form>
+      <div class="filter-form">
+        <div class="form-item">
+          <label class="form-label">项目状态</label>
+          <select class="form-select" v-model="statusFilter">
+            <option value="">全部</option>
+            <option value="ongoing">进行中</option>
+            <option value="ended">已结束</option>
+            <option value="settled">已结算</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label class="form-label">时间范围</label>
+          <div class="date-range">
+            <input 
+              type="date" 
+              class="form-input" 
+              v-model="startDate"
+            />
+            <span class="date-separator">至</span>
+            <input 
+              type="date" 
+              class="form-input" 
+              v-model="endDate"
+            />
+          </div>
+        </div>
+        <button class="btn btn-primary" @click="handleSearch">查询</button>
+      </div>
+      <div class="filter-actions">
+        <button class="btn btn-outline">
+          <span class="icon">⬇</span>
+          导出列表
+        </button>
+        <button class="btn btn-primary" @click="handleCreate">
+          <span class="icon">+</span>
+          创建项目
+        </button>
+      </div>
     </div>
 
-    <!-- 项目列表 -->
+    <!-- 表格区域 -->
     <div class="table-card">
-      <el-table :data="projectList" v-loading="loading" style="width: 100%">
-        <el-table-column prop="projectId" label="项目编号" width="140" />
-        <el-table-column prop="name" label="项目名称" min-width="200" />
-        <el-table-column prop="startDate" label="开始日期" width="120" />
-        <el-table-column prop="endDate" label="结束日期" width="120" />
-        <el-table-column label="参与人员" width="100">
-          <template #default="{ row }">
-            <el-tag size="small" type="info">{{ row.employeeCount }}人</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="使用设备" width="100">
-          <template #default="{ row }">
-            <el-tag size="small" type="warning">{{ row.deviceCount }}台</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="项目状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)">
-              {{ getStatusText(row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="结算金额" width="120" align="right">
-          <template #default="{ row }">
-            <span v-if="row.settlementAmount" class="amount-text">
-              ¥{{ formatAmount(row.settlementAmount) }}
-            </span>
-            <span v-else class="empty-text">-</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="handleViewDetail(row)">
-              详情
-            </el-button>
-            <el-button link type="primary" size="small" @click="handleEdit(row)">
-              编辑
-            </el-button>
-            <el-dropdown trigger="click" @command="handleAction">
-              <el-button link type="primary" size="small">
-                更多<el-icon class="el-icon--right"><arrow-down /></el-icon>
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item 
-                    v-if="row.status === 'ongoing'" 
-                    command="end" 
-                    :disabled="!canEndProject(row)"
-                  >
-                    结束项目
-                  </el-dropdown-item>
-                  <el-dropdown-item 
-                    v-if="row.status === 'ended'" 
-                    command="settle"
-                  >
-                    发起结算
-                  </el-dropdown-item>
-                  <el-dropdown-item command="delete" divided>
-                    删除项目
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th width="60">序号</th>
+            <th width="200">项目名称</th>
+            <th width="120">开始时间</th>
+            <th width="120">结束时间</th>
+            <th width="100">状态</th>
+            <th width="150">关联资源</th>
+            <th width="150">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(project, index) in filteredList" :key="project.id">
+            <td>{{ index + 1 }}</td>
+            <td class="font-bold">{{ project.name }}</td>
+            <td>{{ project.startDate }}</td>
+            <td>{{ project.endDate || '—' }}</td>
+            <td>
+              <span :class="['status-tag', project.status]">
+                <span class="status-dot"></span>
+                {{ getStatusText(project.status) }}
+              </span>
+            </td>
+            <td>
+              <div class="resource-info">
+                <span>{{ project.employeeCount }}人</span>
+                <span class="resource-divider">/</span>
+                <span>{{ project.deviceCount }}设备</span>
+              </div>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="btn-text" @click="handleDetail(project)">详情</button>
+                <button 
+                  v-if="project.status === 'ongoing'" 
+                  class="btn-text btn-warning"
+                  @click="handleEnd(project)"
+                >
+                  结束
+                </button>
+                <button 
+                  v-if="project.status === 'ended'" 
+                  class="btn-text btn-success"
+                  @click="handleSettle(project)"
+                >
+                  结算
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <!-- 分页 -->
-      <div class="pagination-wrapper">
-        <el-pagination
-          v-model:current-page="pagination.page"
-          v-model:page-size="pagination.pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="pagination.total"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        />
+      <div class="pagination">
+        <span class="pagination-info">共 {{ projectList.length }} 个项目，第 {{ currentPage }} / {{ totalPages }} 页</span>
+        <div class="pagination-controls">
+          <button class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
+            &lt;
+          </button>
+          <button 
+            v-for="page in totalPages" 
+            :key="page"
+            :class="['page-num', currentPage === page ? 'active' : '']"
+            @click="currentPage = page"
+          >
+            {{ page }}
+          </button>
+          <button class="page-btn" :disabled="currentPage >= totalPages" @click="currentPage++">
+            &gt;
+          </button>
+        </div>
       </div>
     </div>
-
-    <!-- 结束项目对话框 -->
-    <el-dialog
-      v-model="endDialogVisible"
-      title="结束项目"
-      width="400px"
-      @close="handleCloseEndDialog"
-    >
-      <el-form :model="endForm" label-width="80px">
-        <el-form-item label="结束日期" required>
-          <el-date-picker
-            v-model="endForm.endDate"
-            type="date"
-            placeholder="选择结束日期"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-            style="width: 100%"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="endDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleConfirmEnd" :loading="ending">
-          确认结束
-        </el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+<script setup>
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowDown } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
-// 筛选表单
-const filterForm = reactive({
-  status: '',
-  startDate: '',
-  endDate: ''
-})
+const statusFilter = ref('')
+const startDate = ref('')
+const endDate = ref('')
+const currentPage = ref(1)
 
-// 分页
-const pagination = reactive({
-  page: 1,
-  pageSize: 10,
-  total: 0
-})
+const projectList = ref([
+  { id: 1, name: '智能客服系统', startDate: '2026-01-10', endDate: '2026-02-15', status: 'settled', employeeCount: 3, deviceCount: 2 },
+  { id: 2, name: '数据平台 V2', startDate: '2026-02-01', endDate: '', status: 'ongoing', employeeCount: 5, deviceCount: 3 },
+  { id: 3, name: 'AI 算法研发', startDate: '2026-02-10', endDate: '2026-02-28', status: 'ended', employeeCount: 2, deviceCount: 1 },
+  { id: 4, name: '自动化测试框架', startDate: '2025-11-01', endDate: '2025-12-31', status: 'settled', employeeCount: 2, deviceCount: 2 },
+  { id: 5, name: '供应链优化', startDate: '2026-01-15', endDate: '', status: 'ongoing', employeeCount: 4, deviceCount: 2 }
+])
 
-// 列表数据
-const projectList = ref<any[]>([])
-const loading = ref(false)
-
-// 结束项目对话框
-const endDialogVisible = ref(false)
-const ending = ref(false)
-const currentProject = ref<any>(null)
-const endForm = reactive({
-  endDate: ''
-})
-
-// Mock 数据
-const mockProjects = [
-  {
-    id: 1,
-    projectId: 'PRJ202601001',
-    name: '智能客服系统研发',
-    description: '新一代 AI 驱动的智能客服平台，集成自然语言处理与知识图谱技术',
-    startDate: '2026-01-10',
-    endDate: '2026-02-15',
-    status: 'settled',
-    settlementAmount: 128500.00,
-    employeeCount: 5,
-    deviceCount: 3,
-    createdBy: { id: 1, name: '张伟' },
-    createdAt: '2026-01-05T14:30:00.000+08:00'
-  },
-  {
-    id: 2,
-    projectId: 'PRJ202602001',
-    name: '数据中台 V2.0 升级',
-    description: '企业级大数据分析平台升级，提升数据处理能力',
-    startDate: '2026-02-01',
-    endDate: '',
-    status: 'ongoing',
-    settlementAmount: null,
-    employeeCount: 8,
-    deviceCount: 5,
-    createdBy: { id: 1, name: '张伟' },
-    createdAt: '2026-01-28T09:15:00.000+08:00'
-  },
-  {
-    id: 3,
-    projectId: 'PRJ202601002',
-    name: '移动端 APP 开发',
-    description: 'iOS 和 Android 双平台移动应用开发',
-    startDate: '2026-01-15',
-    endDate: '2026-03-01',
-    status: 'ended',
-    settlementAmount: null,
-    employeeCount: 6,
-    deviceCount: 4,
-    createdBy: { id: 2, name: '李娜' },
-    createdAt: '2026-01-10T11:20:00.000+08:00'
-  },
-  {
-    id: 4,
-    projectId: 'PRJ202603001',
-    name: '物联网设备管理平台',
-    description: 'IoT 设备接入与管理平台研发',
-    startDate: '2026-03-01',
-    endDate: '',
-    status: 'ongoing',
-    settlementAmount: null,
-    employeeCount: 4,
-    deviceCount: 2,
-    createdBy: { id: 1, name: '张伟' },
-    createdAt: '2026-02-25T16:00:00.000+08:00'
-  },
-  {
-    id: 5,
-    projectId: 'PRJ202512001',
-    name: 'AI 算法优化项目',
-    description: '深度学习模型优化与性能提升',
-    startDate: '2025-12-01',
-    endDate: '2026-01-31',
-    status: 'settled',
-    settlementAmount: 95000.00,
-    employeeCount: 3,
-    deviceCount: 2,
-    createdBy: { id: 3, name: '王强' },
-    createdAt: '2025-11-25T10:00:00.000+08:00'
+const filteredList = computed(() => {
+  let list = projectList.value
+  
+  if (statusFilter.value) {
+    list = list.filter(item => item.status === statusFilter.value)
   }
-]
-
-// 获取状态类型
-const getStatusType = (status: string) => {
-  const typeMap: Record<string, any> = {
-    ongoing: 'success',
-    ended: 'warning',
-    settled: 'info'
+  
+  if (startDate.value) {
+    list = list.filter(item => item.startDate >= startDate.value)
   }
-  return typeMap[status] || 'info'
-}
+  
+  if (endDate.value) {
+    list = list.filter(item => !item.endDate || item.endDate <= endDate.value)
+  }
+  
+  return list
+})
 
-// 获取状态文本
-const getStatusText = (status: string) => {
-  const textMap: Record<string, string> = {
+const totalPages = computed(() => Math.ceil(filteredList.value.length / 10))
+
+const getStatusText = (status) => {
+  const map = {
     ongoing: '进行中',
     ended: '已结束',
     settled: '已结算'
   }
-  return textMap[status] || status
+  return map[status] || status
 }
 
-// 格式化金额
-const formatAmount = (amount: number) => {
-  return amount.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
-
-// 判断是否可以结束项目
-const canEndProject = (row: any) => {
-  return row.status === 'ongoing'
-}
-
-// 加载数据
-const loadProjects = async () => {
-  loading.value = true
-  try {
-    // TODO: 调用实际 API
-    // const res = await getProjects(filterForm, pagination)
-    // 使用 Mock 数据
-    await new Promise(resolve => setTimeout(resolve, 300))
-    projectList.value = mockProjects
-    pagination.total = mockProjects.length
-  } catch (error) {
-    ElMessage.error('加载项目列表失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-// 搜索
 const handleSearch = () => {
-  pagination.page = 1
-  loadProjects()
-  ElMessage.success('搜索完成')
+  currentPage.value = 1
 }
 
-// 重置
-const handleReset = () => {
-  filterForm.status = ''
-  filterForm.startDate = ''
-  filterForm.endDate = ''
-  pagination.page = 1
-  loadProjects()
+const handleCreate = () => {
+  router.push('/projects/create')
 }
 
-// 分页变化
-const handleSizeChange = () => {
-  loadProjects()
+const handleDetail = (project) => {
+  router.push(`/projects/${project.id}`)
 }
 
-const handlePageChange = () => {
-  loadProjects()
-}
-
-// 查看详情
-const handleViewDetail = (row: any) => {
-  router.push(`/projects/${row.id}`)
-}
-
-// 编辑
-const handleEdit = (row: any) => {
-  ElMessage.info('编辑功能开发中')
-}
-
-// 操作下拉
-const handleAction = async (command: string) => {
-  if (command === 'end') {
-    endDialogVisible.value = true
-  } else if (command === 'settle') {
-    if (currentProject.value) {
-      router.push(`/projects/${currentProject.value.id}/settlement`)
-    }
-  } else if (command === 'delete') {
-    await ElMessageBox.confirm('确定要删除这个项目吗？删除后无法恢复。', '警告', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
-    ElMessage.success('删除成功（Mock）')
+const handleEnd = (project) => {
+  if (confirm(`确定要结束项目"${project.name}"吗？`)) {
+    project.status = 'ended'
+    project.endDate = new Date().toISOString().split('T')[0]
   }
 }
 
-// 关闭结束对话框
-const handleCloseEndDialog = () => {
-  endForm.endDate = ''
-  currentProject.value = null
+const handleSettle = (project) => {
+  router.push(`/projects/${project.id}/settlement`)
 }
-
-// 确认结束项目
-const handleConfirmEnd = async () => {
-  if (!endForm.endDate) {
-    ElMessage.warning('请选择结束日期')
-    return
-  }
-  ending.value = true
-  try {
-    // TODO: 调用 API
-    await new Promise(resolve => setTimeout(resolve, 500))
-    ElMessage.success('项目已结束')
-    endDialogVisible.value = false
-    loadProjects()
-  } catch (error) {
-    ElMessage.error('结束项目失败')
-  } finally {
-    ending.value = false
-  }
-}
-
-onMounted(() => {
-  loadProjects()
-})
 </script>
 
 <style scoped lang="scss">
 .project-list-page {
-  padding: 24px;
+  padding: var(--spacing-4xl);
+  min-height: calc(100vh - 80px);
 }
 
 // 页面头部
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-3xl);
 
-  .header-left {
-    .page-title {
-      font-size: 24px;
-      font-weight: 600;
-      color: #272b30;
-      margin: 0 0 8px 0;
-    }
-
-    .page-subtitle {
-      font-size: 14px;
-      color: #9a9fa5;
-    }
+  .page-title {
+    font-size: var(--font-4xl);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
   }
 }
 
 // 筛选卡片
 .filter-card {
-  background: #fcfcfc;
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
-  .filter-form {
-    .el-form-item {
-      margin-bottom: 0;
-      margin-right: 16px;
+.filter-form {
+  display: flex;
+  gap: var(--spacing-2xl);
+  align-items: flex-end;
+  flex: 1;
+
+  .form-item {
+    .form-label {
+      display: block;
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .form-select,
+    .form-input {
+      padding: 8px 12px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-md);
+      color: var(--text-primary);
+      background: white;
+      min-width: 140px;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+    }
+
+    .date-range {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+
+      .date-separator {
+        color: var(--text-hint);
+        font-size: var(--font-md);
+      }
+    }
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+// 按钮
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: var(--font-md);
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .icon {
+    font-size: 16px;
+  }
+
+  &.btn-primary {
+    background: var(--primary);
+    color: white;
+
+    &:hover {
+      background: var(--primary-hover);
+    }
+  }
+
+  &.btn-outline {
+    background: white;
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+
+    &:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  }
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-md);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--bg-secondary);
+  }
+
+  &.btn-warning {
+    color: var(--warning);
+
+    &:hover {
+      background: #fff7e6;
+    }
+  }
+
+  &.btn-success {
+    color: var(--success);
+
+    &:hover {
+      background: #f6ffed;
     }
   }
 }
 
 // 表格卡片
 .table-card {
-  background: #fcfcfc;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-sm);
+}
 
-  .amount-text {
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: var(--spacing-lg) var(--spacing-md);
+    font-size: var(--font-sm);
     font-weight: 600;
-    color: #0d9f5f;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-secondary);
   }
 
-  .empty-text {
-    color: #9a9fa5;
+  td {
+    padding: var(--spacing-lg) var(--spacing-md);
+    font-size: var(--font-md);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-light);
   }
 
-  .pagination-wrapper {
-    margin-top: 24px;
+  tr:hover td {
+    background: var(--bg-secondary);
+  }
+
+  .font-bold {
+    font-weight: 600;
+  }
+
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    &.ongoing {
+      background: #e6f4ff;
+      color: #1890ff;
+
+      .status-dot {
+        background: #1890ff;
+      }
+    }
+
+    &.ended {
+      background: #fff7e6;
+      color: #faad14;
+
+      .status-dot {
+        background: #faad14;
+      }
+    }
+
+    &.settled {
+      background: #f6ffed;
+      color: #52c41a;
+
+      .status-dot {
+        background: #52c41a;
+      }
+    }
+  }
+
+  .resource-info {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-md);
+    color: var(--text-primary);
+
+    .resource-divider {
+      color: var(--text-hint);
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: var(--spacing-xs);
+  }
+}
+
+// 分页
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-2xl);
+  padding-top: var(--spacing-2xl);
+  border-top: 1px solid var(--border-light);
+
+  .pagination-info {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: white;
+      cursor: pointer;
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+      transition: all 0.2s;
+
+      &:hover:not(:disabled) {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .page-num {
+      min-width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: white;
+      cursor: pointer;
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      &.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+      }
+    }
   }
 }
 </style>

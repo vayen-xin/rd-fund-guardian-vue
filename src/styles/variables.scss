@@ -1,62 +1,70 @@
-// 全局样式变量 - 根据 Figma 设计稿优化
+// 全局样式变量 - 严格按照 Figma 设计稿
 
 // 主题色（根据设计稿）
-$primary-color: #272B30;  // 深灰黑 - 主色
-$success-color: #0d9f5f;  // 绿色
-$warning-color: #d48806;  // 黄色
-$danger-color: #c2185b;   // 粉色/红色
+$primary-color: #252833;  // 深灰黑 - 主色（按钮、标题）
+$primary-hover: #3d4152;  // 悬停色
+$success-color: #52c41a;  // 绿色 - 成功状态
+$warning-color: #faad14;  // 黄色 - 警告状态
+$danger-color: #ff4d4f;   // 红色 - 危险状态
+$info-color: #1890ff;     // 蓝色 - 信息
 
 // 中性色
-$neutral-100: #fcfcfc;  // 最浅背景
-$neutral-200: #f4f4f4;  // 次级背景
-$neutral-300: #efefef;  // 悬停背景
-$neutral-400: #e0e0e0;  // 边框
-$neutral-500: #9a9fa5;  // 提示文字
-$neutral-600: #6f767e;  // 次级文字
-$neutral-700: #272b30;  // 主文字
+$neutral-50: #fafafa;     // 最浅背景
+$neutral-100: #f5f5f5;    // 浅灰背景
+$neutral-200: #f0f0f0;    // 次级背景
+$neutral-300: #e8e8e8;    // 边框
+$neutral-400: #d9d9d9;    // 禁用边框
+$neutral-500: #bfbfbf;    // 禁用文字
+$neutral-600: #8c8c8c;    // 次级文字
+$neutral-700: #595959;    // 常规文字
+$neutral-800: #262626;    // 主文字
+$neutral-900: #1f1f1f;    // 最深文字
 
 // 功能色
-$primary: #272B30;
-$success: #0d9f5f;
-$warning: #d48806;
-$danger: #c2185b;
-$info: #3b5bdb;
+$primary: #252833;
+$success: #52c41a;
+$warning: #faad14;
+$danger: #ff4d4f;
+$info: #1890ff;
 
-// 浅色模式（默认）
+// CSS 变量系统
 :root {
   // 背景色
-  --bg-primary: #fcfcfc;
-  --bg-secondary: #f4f4f4;
-  --bg-tertiary: #efefef;
+  --bg-primary: #fafafa;
+  --bg-secondary: #f5f5f5;
   --bg-white: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.45);
   
   // 边框色
-  --border-light: #efefef;
-  --border-default: #f4f4f4;
-  --border-dark: #e0e0e0;
+  --border-light: #f0f0f0;
+  --border-default: #e8e8e8;
+  --border-dark: #d9d9d9;
   
   // 文字色
-  --text-primary: #272b30;
-  --text-secondary: #6f767e;
-  --text-hint: #9a9fa5;
+  --text-primary: #262626;
+  --text-secondary: #595959;
+  --text-hint: #8c8c8c;
+  --text-disabled: #bfbfbf;
   
   // 侧边栏
-  --sidebar-bg: #fcfcfc;
-  --sidebar-text: #6f767e;
-  --sidebar-text-active: #272b30;
-  --sidebar-hover: #f4f4f4;
-  --sidebar-active: #efefef;
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #595959;
+  --sidebar-text-active: #252833;
+  --sidebar-hover: #f5f5f5;
+  --sidebar-active: #e6f4ff;
+  --sidebar-border: #f0f0f0;
   
   // 阴影
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 12px 0 rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
   
   // 圆角
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
   
   // 间距
   --spacing-xs: 4px;
@@ -69,40 +77,45 @@ $info: #3b5bdb;
   --spacing-4xl: 40px;
   
   // 字体大小
-  --font-xs: 11px;
-  --font-sm: 12px;
-  --font-md: 13px;
-  --font-lg: 14px;
+  --font-xs: 12px;
+  --font-sm: 13px;
+  --font-md: 14px;
+  --font-lg: 15px;
   --font-xl: 16px;
   --font-2xl: 18px;
   --font-3xl: 20px;
   --font-4xl: 24px;
-  --font-5xl: 32px;
+  --font-5xl: 30px;
+  
+  // 行高
+  --line-height-sm: 1.5;
+  --line-height-md: 1.5715;
+  --line-height-lg: 1.6;
 }
 
 // 暗黑模式（预留）
 html.dark {
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #242424;
-  --bg-tertiary: #2a2a2a;
-  --bg-white: #1f1f1f;
+  --bg-primary: #141414;
+  --bg-secondary: #1f1f1f;
+  --bg-white: #262626;
+  --bg-overlay: rgba(0, 0, 0, 0.65);
   
-  --border-light: #2a2a2a;
-  --border-default: #333333;
-  --border-dark: #404040;
+  --border-light: #303030;
+  --border-default: #424242;
+  --border-dark: #595959;
   
-  --text-primary: #fcfcfc;
-  --text-secondary: #9a9fa5;
-  --text-hint: #6f767e;
+  --text-primary: #f5f5f5;
+  --text-secondary: #d9d9d9;
+  --text-hint: #8c8c8c;
   
-  --sidebar-bg: #1a1a1a;
-  --sidebar-text: #9a9fa5;
-  --sidebar-text-active: #fcfcfc;
-  --sidebar-hover: #242424;
-  --sidebar-active: #2a2a2a;
+  --sidebar-bg: #1f1f1f;
+  --sidebar-text: #8c8c8c;
+  --sidebar-text-active: #f5f5f5;
+  --sidebar-hover: #262626;
+  --sidebar-active: #111d2c;
 }
 
-// 兼容旧变量（逐步迁移到 CSS 变量）
+// 兼容旧变量
 $bg-color: var(--bg-primary);
 $border-color: var(--border-default);
 $text-primary: var(--text-primary);
