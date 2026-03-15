@@ -2,9 +2,10 @@
   <div class="project-settlement-page">
     <!-- 返回按钮 -->
     <div class="back-nav">
-      <el-button link type="primary" icon="ArrowLeft" @click="handleBack">
+      <button class="btn btn-link" @click="handleBack">
+        <span class="btn-icon">←</span>
         返回项目详情
-      </el-button>
+      </button>
     </div>
 
     <div class="settlement-container">
@@ -17,155 +18,202 @@
         <!-- 项目信息概览 -->
         <div class="project-overview">
           <h3 class="overview-title">项目信息</h3>
-          <el-descriptions :column="2" border size="small">
-            <el-descriptions-item label="项目编号">{{ project.projectId }}</el-descriptions-item>
-            <el-descriptions-item label="项目名称">{{ project.name }}</el-descriptions-item>
-            <el-descriptions-item label="开始日期">{{ project.startDate }}</el-descriptions-item>
-            <el-descriptions-item label="结束日期">{{ project.endDate }}</el-descriptions-item>
-            <el-descriptions-item label="参与人员">{{ employees.length }}人</el-descriptions-item>
-            <el-descriptions-item label="使用设备">{{ devices.length }}台</el-descriptions-item>
-          </el-descriptions>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">项目编号</span>
+              <span class="info-value">{{ project.projectId }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">项目名称</span>
+              <span class="info-value">{{ project.name }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">开始日期</span>
+              <span class="info-value">{{ project.startDate }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">结束日期</span>
+              <span class="info-value">{{ project.endDate }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">参与人员</span>
+              <span class="info-value">{{ employees.length }}人</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">使用设备</span>
+              <span class="info-value">{{ devices.length }}台</span>
+            </div>
+          </div>
         </div>
 
-        <el-form
-          ref="formRef"
-          :model="form"
-          :rules="rules"
-          label-width="120px"
-          class="settlement-form"
-        >
+        <form class="form" @submit.prevent="handleSubmit">
           <!-- 结算金额 -->
           <div class="form-section">
             <h2 class="section-title">结算信息</h2>
-            <el-divider />
+            <div class="section-divider"></div>
 
-            <el-form-item label="结算金额" prop="settlementAmount" required>
-              <el-input-number
-                v-model="form.settlementAmount"
-                :min="0"
-                :precision="2"
-                :step="100"
-                placeholder="请输入结算金额"
-                style="width: 100%"
-                controls-position="right"
-              >
-                <template #prefix>
-                  <span style="color: #9a9fa5; font-size: 14px;">¥</span>
-                </template>
-              </el-input-number>
-            </el-form-item>
+            <div class="form-group">
+              <label class="form-label">
+                <span class="required">*</span>
+                结算金额 (元)
+              </label>
+              <div class="input-with-prefix">
+                <span class="input-prefix">¥</span>
+                <input 
+                  type="number" 
+                  class="form-input" 
+                  v-model="form.settlementAmount"
+                  placeholder="请输入结算金额"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
 
-            <el-form-item label="金额说明">
-              <el-input
+            <div class="form-group">
+              <label class="form-label">金额说明</label>
+              <textarea 
+                class="form-textarea" 
                 v-model="form.amountDescription"
-                type="textarea"
-                :rows="2"
                 placeholder="可选：说明金额计算方式"
                 maxlength="500"
-                show-word-limit
-              />
-            </el-form-item>
+                rows="2"
+              ></textarea>
+              <span class="input-count">{{ form.amountDescription.length }}/500</span>
+            </div>
           </div>
 
           <!-- 凭证文件 -->
           <div class="form-section">
             <h2 class="section-title">凭证文件</h2>
-            <el-divider />
+            <div class="section-divider"></div>
 
-            <el-form-item label="上传凭证" required>
-              <el-upload
-                ref="uploadRef"
-                :auto-upload="false"
-                :on-change="handleFileChange"
-                :on-remove="handleFileRemove"
-                :file-list="fileList"
-                multiple
-                :limit="10"
-                drag
-              >
-                <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                <div class="el-upload__text">
-                  拖拽文件到此处或 <em>点击上传</em>
+            <div class="form-group">
+              <label class="form-label">
+                <span class="required">*</span>
+                上传凭证
+              </label>
+              <div class="upload-area" @click="triggerFileInput">
+                <input 
+                  type="file" 
+                  ref="fileInput"
+                  @change="handleFileChange"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  style="display: none"
+                />
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">拖拽文件到此处或 <span class="upload-link">点击上传</span></div>
+                <div class="upload-tip">支持 pdf/jpg/png 格式，单个文件不超过 10MB，最多 10 个文件</div>
+              </div>
+
+              <div v-if="fileList.length > 0" class="file-list">
+                <div v-for="(file, index) in fileList" :key="index" class="file-item">
+                  <span class="file-icon">📄</span>
+                  <span class="file-name">{{ file.name }}</span>
+                  <button type="button" class="file-remove" @click="handleFileRemove(index)">×</button>
                 </div>
-                <template #tip>
-                  <div class="el-upload__tip">
-                    支持 pdf/jpg/png 格式，单个文件不超过 10MB，最多 10 个文件
-                  </div>
-                </template>
-              </el-upload>
-            </el-form-item>
+              </div>
+            </div>
 
-            <el-form-item label="凭证类型">
-              <el-select v-model="form.proofTypes" multiple placeholder="选择凭证类型" style="width: 100%">
-                <el-option label="发票" value="invoice" />
-                <el-option label="合同" value="contract" />
-                <el-option label="付款凭证" value="payment" />
-                <el-option label="验收报告" value="acceptance" />
-                <el-option label="其他" value="other" />
-              </el-select>
-            </el-form-item>
+            <div class="form-group">
+              <label class="form-label">凭证类型</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" value="invoice" v-model="form.proofTypes" />
+                  <span class="checkbox-text">发票</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="contract" v-model="form.proofTypes" />
+                  <span class="checkbox-text">合同</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="payment" v-model="form.proofTypes" />
+                  <span class="checkbox-text">付款凭证</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="acceptance" v-model="form.proofTypes" />
+                  <span class="checkbox-text">验收报告</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="other" v-model="form.proofTypes" />
+                  <span class="checkbox-text">其他</span>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <!-- 费用明细（可选） -->
+          <!-- 费用明细 -->
           <div class="form-section">
-            <h2 class="section-title">费用明细（可选）</h2>
-            <el-divider />
+            <div class="section-header">
+              <h2 class="section-title">费用明细（可选）</h2>
+              <button type="button" class="btn btn-link" @click="handleAddDetail">
+                <span class="btn-icon">+</span>
+                添加明细
+              </button>
+            </div>
+            <div class="section-divider"></div>
 
-            <el-table :data="costDetails" border style="width: 100%">
-              <el-table-column prop="category" label="费用类别" width="150">
-                <template #default="{ row, $index }">
-                  <el-select v-model="row.category" placeholder="选择类别" size="small">
-                    <el-option label="人工成本" value="labor" />
-                    <el-option label="直接投入" value="direct" />
-                    <el-option label="折旧费用" value="depreciation" />
-                    <el-option label="无形资产摊销" value="intangible" />
-                    <el-option label="设计试验费" value="design" />
-                    <el-option label="外包费用" value="outsourcing" />
-                    <el-option label="知识产权费" value="ip" />
-                    <el-option label="其他费用" value="other" />
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="description" label="说明" min-width="180">
-                <template #default="{ row }">
-                  <el-input v-model="row.description" placeholder="费用说明" size="small" />
-                </template>
-              </el-table-column>
-              <el-table-column prop="amount" label="金额 (元)" width="150">
-                <template #default="{ row, $index }">
-                  <el-input-number
-                    v-model="row.amount"
-                    :min="0"
-                    :precision="2"
-                    placeholder="0.00"
-                    size="small"
-                    controls-position="right"
-                    style="width: 100%"
-                  />
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="80">
-                <template #default="{ $index }">
-                  <el-button link type="danger" size="small" @click="handleRemoveDetail($index)">
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-
-            <el-button type="primary" link icon="Plus" @click="handleAddDetail" style="margin-top: 12px">
-              添加明细
-            </el-button>
+            <table class="detail-table">
+              <thead>
+                <tr>
+                  <th width="150">费用类别</th>
+                  <th>说明</th>
+                  <th width="150">金额 (元)</th>
+                  <th width="80">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(row, index) in costDetails" :key="index">
+                  <td>
+                    <select class="form-select" v-model="row.category">
+                      <option value="">选择类别</option>
+                      <option value="labor">人工成本</option>
+                      <option value="direct">直接投入</option>
+                      <option value="depreciation">折旧费用</option>
+                      <option value="intangible">无形资产摊销</option>
+                      <option value="design">设计试验费</option>
+                      <option value="outsourcing">外包费用</option>
+                      <option value="ip">知识产权费</option>
+                      <option value="other">其他费用</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input 
+                      type="text" 
+                      class="form-input" 
+                      v-model="row.description"
+                      placeholder="费用说明"
+                    />
+                  </td>
+                  <td>
+                    <input 
+                      type="number" 
+                      class="form-input" 
+                      v-model="row.amount"
+                      placeholder="0.00"
+                      min="0"
+                      step="0.01"
+                    />
+                  </td>
+                  <td>
+                    <button type="button" class="btn-link btn-delete" @click="handleRemoveDetail(index)">
+                      删除
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <!-- 提交按钮 -->
           <div class="form-actions">
-            <el-button @click="handleBack">取消</el-button>
-            <el-button type="primary" @click="handleSubmit" :loading="submitting" size="large">
-              提交结算
-            </el-button>
+            <button type="button" class="btn btn-outline" @click="handleBack">取消</button>
+            <button type="submit" class="btn btn-primary" :disabled="submitting">
+              {{ submitting ? '提交中...' : '提交结算' }}
+            </button>
           </div>
-        </el-form>
+        </form>
       </div>
 
       <!-- 结算说明卡片 -->
@@ -182,71 +230,38 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowLeft, UploadFilled, Plus } from '@element-plus/icons-vue'
-import type { FormInstance, FormRules, UploadUserFile } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
-const formRef = ref<FormInstance>()
-const uploadRef = ref()
+const fileInput = ref()
 const submitting = ref(false)
 
 // 项目信息
-const project = ref<any>({
-  projectId: '',
-  name: '',
-  startDate: '',
-  endDate: ''
-})
-const employees = ref<any[]>([])
-const devices = ref<any[]>([])
+const project = ref({ projectId: '', name: '', startDate: '', endDate: '' })
+const employees = ref([])
+const devices = ref([])
 
 // 表单数据
 const form = reactive({
-  settlementAmount: null as number | null,
+  settlementAmount: null,
   amountDescription: '',
-  proofTypes: [] as string[],
-  proofFiles: [] as any[]
+  proofTypes: [],
+  proofFiles: []
 })
 
-// 表单验证规则
-const rules: FormRules = {
-  settlementAmount: [
-    { required: true, message: '请输入结算金额', trigger: 'change' }
-  ]
-}
-
 // 文件列表
-const fileList = ref<UploadUserFile[]>([])
+const fileList = ref([])
 
 // 费用明细
-const costDetails = ref<any[]>([
-  { category: '', description: '', amount: null }
-])
+const costDetails = ref([{ category: '', description: '', amount: null }])
 
 // Mock 数据
-const mockProject = {
-  id: 1,
-  projectId: 'PRJ202601001',
-  name: '智能客服系统研发',
-  startDate: '2026-01-10',
-  endDate: '2026-02-15'
-}
-
-const mockEmployees = [
-  { id: 1, name: '张伟' },
-  { id: 2, name: '李娜' },
-  { id: 3, name: '王强' }
-]
-
-const mockDevices = [
-  { id: 1, name: 'GPU 服务器 A' },
-  { id: 2, name: '测试手机 iPhone15' }
-]
+const mockProject = { id: 1, projectId: 'PRJ202601001', name: '智能客服系统研发', startDate: '2026-01-10', endDate: '2026-02-15' }
+const mockEmployees = [{ id: 1, name: '张伟' }, { id: 2, name: '李娜' }, { id: 3, name: '王强' }]
+const mockDevices = [{ id: 1, name: 'GPU 服务器 A' }, { id: 2, name: '测试手机 iPhone15' }]
 
 // 加载数据
 const loadProjectInfo = async () => {
@@ -256,99 +271,81 @@ const loadProjectInfo = async () => {
     employees.value = mockEmployees
     devices.value = mockDevices
   } catch (error) {
-    ElMessage.error('加载项目信息失败')
+    alert('加载项目信息失败')
   }
 }
 
+// 触发文件选择
+const triggerFileInput = () => fileInput.value.click()
+
 // 文件变化
-const handleFileChange = (file: UploadUserFile, files: UploadUserFile[]) => {
-  fileList.value = files
-  form.proofFiles = files.map(f => ({
-    name: f.name,
-    size: f.size,
-    type: f.name.split('.').pop()
-  }))
+const handleFileChange = (e) => {
+  const files = Array.from(e.target.files)
+  files.forEach(file => {
+    if (fileList.value.length < 10) {
+      fileList.value.push({ name: file.name, size: file.size, type: file.name.split('.').pop() })
+    }
+  })
+  form.proofFiles = fileList.value
 }
 
-const handleFileRemove = (file: UploadUserFile, files: UploadUserFile[]) => {
-  fileList.value = files
-  form.proofFiles = files.map(f => ({
-    name: f.name,
-    size: f.size,
-    type: f.name.split('.').pop()
-  }))
+const handleFileRemove = (index) => {
+  fileList.value.splice(index, 1)
+  form.proofFiles = fileList.value
 }
 
 // 添加明细
-const handleAddDetail = () => {
-  costDetails.value.push({ category: '', description: '', amount: null })
-}
+const handleAddDetail = () => costDetails.value.push({ category: '', description: '', amount: null })
 
-const handleRemoveDetail = (index: number) => {
+const handleRemoveDetail = (index) => {
   if (costDetails.value.length === 1) {
-    ElMessage.warning('至少保留一行明细')
+    alert('至少保留一行明细')
     return
   }
   costDetails.value.splice(index, 1)
 }
 
 // 返回
-const handleBack = () => {
-  router.push(`/projects/${route.params.id}`)
-}
+const handleBack = () => router.push(`/projects/${route.params.id}`)
 
 // 提交
 const handleSubmit = async () => {
-  if (!formRef.value) return
+  if (!form.settlementAmount) {
+    alert('请输入结算金额')
+    return
+  }
+  if (fileList.value.length === 0) {
+    alert('请至少上传一个凭证文件')
+    return
+  }
 
-  await formRef.value.validate(async (valid) => {
-    if (!valid) return
+  if (!confirm('提交后项目将变更为"已结算"状态，无法再修改。确认要提交结算吗？')) {
+    return
+  }
 
-    if (fileList.value.length === 0) {
-      ElMessage.warning('请至少上传一个凭证文件')
-      return
-    }
-
-    await ElMessageBox.confirm(
-      '提交后项目将变更为"已结算"状态，无法再修改。确认要提交结算吗？',
-      '确认结算',
-      {
-        confirmButtonText: '确认提交',
-        cancelButtonText: '再想想',
-        type: 'warning'
-      }
-    )
-
-    submitting.value = true
-    try {
-      // TODO: 调用 API
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      ElMessage.success('结算提交成功')
-      router.push(`/projects/${route.params.id}`)
-    } catch (error: any) {
-      if (error !== 'cancel') {
-        ElMessage.error('提交结算失败')
-      }
-    } finally {
-      submitting.value = false
-    }
-  })
+  submitting.value = true
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    alert('结算提交成功')
+    router.push(`/projects/${route.params.id}`)
+  } catch (error) {
+    alert('提交结算失败')
+  } finally {
+    submitting.value = false
+  }
 }
 
-onMounted(() => {
-  loadProjectInfo()
-})
+onMounted(() => loadProjectInfo())
 </script>
 
 <style scoped lang="scss">
 .project-settlement-page {
-  padding: 24px;
+  padding: 40px;
+  min-height: calc(100vh - 80px);
+  background: #f4f4f4;
 }
 
-.back-nav {
-  margin-bottom: 16px;
-}
+.back-nav { margin-bottom: 24px; }
 
 .settlement-container {
   display: grid;
@@ -358,26 +355,15 @@ onMounted(() => {
 }
 
 .settlement-card {
-  background: #fcfcfc;
+  background: white;
   border-radius: 12px;
-  padding: 32px;
+  padding: 40px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
   .card-header {
     margin-bottom: 32px;
-
-    .page-title {
-      font-size: 24px;
-      font-weight: 600;
-      color: #272b30;
-      margin: 0 0 8px 0;
-    }
-
-    .page-subtitle {
-      font-size: 14px;
-      color: #9a9fa5;
-      margin: 0;
-    }
+    .page-title { font-size: 28px; font-weight: 600; color: #272b30; margin: 0 0 8px 0; }
+    .page-subtitle { font-size: 14px; color: #9a9fa5; margin: 0; }
   }
 }
 
@@ -387,25 +373,121 @@ onMounted(() => {
   padding: 20px;
   margin-bottom: 24px;
 
-  .overview-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6f767e;
-    margin: 0 0 12px 0;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .overview-title { font-size: 14px; font-weight: 600; color: #6f767e; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    .info-item {
+      .info-label { display: block; font-size: 12px; color: #9a9fa5; margin-bottom: 4px; }
+      .info-value { font-size: 14px; color: #272b30; }
+    }
   }
 }
 
 .form-section {
   margin-bottom: 32px;
 
-  .section-title {
-    font-size: 16px;
-    font-weight: 600;
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+  .section-title { font-size: 16px; font-weight: 600; color: #272b30; margin: 0; }
+
+  .section-divider { height: 1px; background: #f0f0f0; margin-bottom: 24px; }
+}
+
+.form-group {
+  margin-bottom: 24px;
+  position: relative;
+
+  .form-label {
+    display: block;
+    font-size: 14px;
     color: #272b30;
-    margin: 0 0 16px 0;
+    margin-bottom: 8px;
+    font-weight: 500;
+    .required { color: #ff4d4f; margin-right: 2px; }
   }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #272b30;
+    background: white;
+    transition: all 0.2s;
+    &:focus { outline: none; border-color: #252833; box-shadow: 0 0 0 2px rgba(37, 40, 51, 0.1); }
+    &::placeholder { color: #9a9fa5; }
+  }
+
+  .form-textarea { resize: vertical; min-height: 60px; }
+
+  .input-count { position: absolute; right: 10px; bottom: -20px; font-size: 12px; color: #9a9fa5; }
+}
+
+.input-with-prefix {
+  display: flex;
+  align-items: center;
+  .input-prefix { padding: 10px 14px; background: #f4f4f4; border: 1px solid #e8e8e8; border-right: none; border-radius: 8px 0 0 8px; color: #9a9fa5; }
+  .form-input { border-radius: 0 8px 8px 0; }
+}
+
+.upload-area {
+  border: 2px dashed #e8e8e8;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { border-color: #252833; background: #fafafa; }
+
+  .upload-icon { font-size: 40px; margin-bottom: 12px; }
+  .upload-text { font-size: 14px; color: #272b30; margin-bottom: 8px; .upload-link { color: #1890ff; } }
+  .upload-tip { font-size: 12px; color: #9a9fa5; }
+}
+
+.file-list {
+  margin-top: 16px;
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f4f4f4;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    .file-icon { font-size: 16px; }
+    .file-name { flex: 1; font-size: 14px; color: #272b30; }
+    .file-remove { background: none; border: none; color: #ff4d4f; cursor: pointer; font-size: 18px; padding: 0; &:hover { color: #ff7875; } }
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    .checkbox-text { font-size: 14px; color: #272b30; }
+  }
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th { text-align: left; padding: 12px; font-size: 13px; font-weight: 600; color: #595959; border-bottom: 1px solid #f0f0f0; background: #fafafa; }
+  td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
+  tr:hover td { background: #f5f5f5; }
+  .form-input, .form-select { padding: 6px 10px; font-size: 13px; }
 }
 
 .form-actions {
@@ -424,12 +506,7 @@ onMounted(() => {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   height: fit-content;
 
-  .info-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #272b30;
-    margin: 0 0 16px 0;
-  }
+  .info-title { font-size: 16px; font-weight: 600; color: #272b30; margin: 0 0 16px 0; }
 
   .info-list {
     list-style: none;
@@ -443,21 +520,33 @@ onMounted(() => {
       margin-bottom: 8px;
       padding-left: 20px;
       position: relative;
-
-      &::before {
-        content: '•';
-        position: absolute;
-        left: 0;
-        color: #d48806;
-        font-weight: bold;
-      }
+      &::before { content: '•'; position: absolute; left: 0; color: #d48806; font-weight: bold; }
     }
   }
 }
 
+// 按钮
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  .btn-icon { font-size: 16px; font-weight: bold; }
+
+  &.btn-primary { background: #252833; color: white; &:hover { background: #3d4152; } &:disabled { opacity: 0.6; cursor: not-allowed; } }
+  &.btn-outline { background: white; color: #272b30; border: 1px solid #d9d9d9; &:hover { border-color: #252833; color: #252833; } }
+  &.btn-link { background: none; border: none; color: #1890ff; padding: 4px 8px; cursor: pointer; font-size: 14px; &:hover { color: #40a9ff; } }
+  &.btn-delete { color: #ff4d4f; &:hover { background: #fff1f0; } }
+}
+
 @media (max-width: 900px) {
-  .settlement-container {
-    grid-template-columns: 1fr;
-  }
+  .settlement-container { grid-template-columns: 1fr; }
+  .project-overview .info-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>

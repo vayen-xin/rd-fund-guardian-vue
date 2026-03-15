@@ -2,9 +2,10 @@
   <div class="project-create-page">
     <!-- 返回按钮 -->
     <div class="back-nav">
-      <el-button link type="primary" icon="ArrowLeft" @click="handleBack">
+      <button class="btn btn-link" @click="handleBack">
+        <span class="btn-icon">←</span>
         返回项目列表
-      </el-button>
+      </button>
     </div>
 
     <div class="form-container">
@@ -14,173 +15,240 @@
           <p class="page-subtitle">填写项目基本信息，选择参与人员和设备</p>
         </div>
 
-        <el-form
-          ref="formRef"
-          :model="form"
-          :rules="rules"
-          label-width="120px"
-          class="project-form"
-        >
+        <form class="form" @submit.prevent="handleSubmit">
           <!-- 基本信息 -->
           <div class="form-section">
             <h2 class="section-title">基本信息</h2>
-            <el-divider />
+            <div class="section-divider"></div>
 
-            <el-form-item label="项目名称" prop="name" required>
-              <el-input
+            <div class="form-group">
+              <label class="form-label">
+                <span class="required">*</span>
+                项目名称
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
                 v-model="form.name"
                 placeholder="请输入项目名称"
                 maxlength="200"
-                show-word-limit
               />
-            </el-form-item>
+              <span class="input-count">{{ form.name.length }}/200</span>
+            </div>
 
-            <el-form-item label="项目描述" prop="description">
-              <el-input
+            <div class="form-group">
+              <label class="form-label">项目描述</label>
+              <textarea 
+                class="form-textarea" 
                 v-model="form.description"
-                type="textarea"
-                :rows="4"
                 placeholder="请描述项目目标、范围等信息"
                 maxlength="1000"
-                show-word-limit
-              />
-            </el-form-item>
+                rows="4"
+              ></textarea>
+              <span class="input-count">{{ form.description.length }}/1000</span>
+            </div>
 
-            <el-form-item label="开始日期" prop="startDate" required>
-              <el-date-picker
+            <div class="form-group">
+              <label class="form-label">
+                <span class="required">*</span>
+                开始日期
+              </label>
+              <input 
+                type="date" 
+                class="form-input" 
                 v-model="form.startDate"
-                type="date"
-                placeholder="选择开始日期"
-                format="YYYY-MM-DD"
-                value-format="YYYY-MM-DD"
-                style="width: 100%"
               />
-            </el-form-item>
+            </div>
           </div>
 
           <!-- 参与人员 -->
           <div class="form-section">
             <div class="section-header">
               <h2 class="section-title">参与人员</h2>
-              <el-button type="primary" link icon="Plus" @click="handleAddEmployee">
+              <button type="button" class="btn btn-link" @click="handleAddEmployee">
+                <span class="btn-icon">+</span>
                 添加人员
-              </el-button>
+              </button>
             </div>
-            <el-divider />
+            <div class="section-divider"></div>
 
             <div v-if="selectedEmployees.length > 0" class="selected-list">
-              <el-tag
-                v-for="emp in selectedEmployees"
-                :key="emp.id"
-                closable
-                @close="handleRemoveEmployee(emp.id)"
-                class="employee-tag"
+              <div 
+                v-for="emp in selectedEmployees" 
+                :key="emp.id" 
+                class="selected-tag"
               >
-                {{ emp.name }} ({{ emp.employeeId }})
-              </el-tag>
+                <span class="tag-text">{{ emp.name }} ({{ emp.employeeId }})</span>
+                <button type="button" class="tag-close" @click="handleRemoveEmployee(emp.id)">×</button>
+              </div>
             </div>
-            <el-empty v-else description="暂未选择人员" :image-size="80" />
+            <div v-else class="empty-state">
+              <span class="empty-text">暂未选择人员</span>
+            </div>
           </div>
 
           <!-- 使用设备 -->
           <div class="form-section">
             <div class="section-header">
               <h2 class="section-title">使用设备</h2>
-              <el-button type="primary" link icon="Plus" @click="handleAddDevice">
+              <button type="button" class="btn btn-link" @click="handleAddDevice">
+                <span class="btn-icon">+</span>
                 添加设备
-              </el-button>
+              </button>
             </div>
-            <el-divider />
+            <div class="section-divider"></div>
 
             <div v-if="selectedDevices.length > 0" class="selected-list">
-              <el-tag
-                v-for="device in selectedDevices"
-                :key="device.id"
-                closable
-                @close="handleRemoveDevice(device.id)"
-                class="device-tag"
-                type="warning"
+              <div 
+                v-for="device in selectedDevices" 
+                :key="device.id" 
+                class="selected-tag device-tag"
               >
-                {{ device.name }} - ¥{{ device.depreciationRate }}/小时
-              </el-tag>
+                <span class="tag-text">{{ device.name }} - ¥{{ device.depreciationRate }}/小时</span>
+                <button type="button" class="tag-close" @click="handleRemoveDevice(device.id)">×</button>
+              </div>
             </div>
-            <el-empty v-else description="暂未选择设备" :image-size="80" />
+            <div v-else class="empty-state">
+              <span class="empty-text">暂未选择设备</span>
+            </div>
           </div>
 
           <!-- 提交按钮 -->
           <div class="form-actions">
-            <el-button @click="handleBack">取消</el-button>
-            <el-button type="primary" @click="handleSubmit" :loading="submitting" size="large">
-              创建项目
-            </el-button>
+            <button type="button" class="btn btn-outline" @click="handleBack">取消</button>
+            <button type="submit" class="btn btn-primary" :disabled="submitting">
+              {{ submitting ? '创建中...' : '创建项目' }}
+            </button>
           </div>
-        </el-form>
+        </form>
       </div>
     </div>
 
     <!-- 选择人员对话框 -->
-    <el-dialog v-model="employeeDialogVisible" title="选择项目人员" width="600px">
-      <div class="dialog-search">
-        <el-input
-          v-model="employeeSearch"
-          placeholder="搜索员工姓名或工号"
-          prefix-icon="Search"
-          clearable
-        />
+    <div v-if="employeeDialogVisible" class="modal-overlay" @click.self="employeeDialogVisible = false">
+      <div class="modal dialog-large">
+        <div class="modal-header">
+          <h3 class="modal-title">选择项目人员</h3>
+          <button class="modal-close" @click="employeeDialogVisible = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="dialog-search">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              class="search-input" 
+              v-model="employeeSearch"
+              placeholder="搜索员工姓名或工号"
+            />
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th width="60">
+                  <input 
+                    type="checkbox" 
+                    :checked="isAllEmployeesSelected"
+                    @change="toggleAllEmployees"
+                  />
+                </th>
+                <th width="100">工号</th>
+                <th width="100">姓名</th>
+                <th width="80">类型</th>
+                <th>部门</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="emp in filteredEmployees" :key="emp.id">
+                <td>
+                  <input 
+                    type="checkbox" 
+                    :checked="isEmployeeSelected(emp.id)"
+                    @change="toggleEmployee(emp)"
+                  />
+                </td>
+                <td>{{ emp.employeeId }}</td>
+                <td class="font-bold">{{ emp.name }}</td>
+                <td>
+                  <span :class="['type-tag', getTypeClass(emp.type)]">
+                    {{ getTypeText(emp.type) }}
+                  </span>
+                </td>
+                <td>{{ emp.department }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" @click="employeeDialogVisible = false">取消</button>
+          <button type="button" class="btn btn-primary" @click="handleConfirmEmployees">确认选择</button>
+        </div>
       </div>
-      <el-table :data="filteredEmployees" @selection-change="handleEmployeeSelection" max-height="400">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="employeeId" label="工号" width="100" />
-        <el-table-column prop="name" label="姓名" width="100" />
-        <el-table-column prop="type" label="类型" width="80">
-          <template #default="{ row }">
-            <el-tag size="small" :type="getEmployeeTypeTag(row.type)">
-              {{ getEmployeeTypeText(row.type) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="department" label="部门" />
-      </el-table>
-      <template #footer>
-        <el-button @click="employeeDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleConfirmEmployees">确认选择</el-button>
-      </template>
-    </el-dialog>
+    </div>
 
     <!-- 选择设备对话框 -->
-    <el-dialog v-model="deviceDialogVisible" title="选择项目设备" width="600px">
-      <div class="dialog-search">
-        <el-input
-          v-model="deviceSearch"
-          placeholder="搜索设备名称或编号"
-          prefix-icon="Search"
-          clearable
-        />
+    <div v-if="deviceDialogVisible" class="modal-overlay" @click.self="deviceDialogVisible = false">
+      <div class="modal dialog-large">
+        <div class="modal-header">
+          <h3 class="modal-title">选择项目设备</h3>
+          <button class="modal-close" @click="deviceDialogVisible = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="dialog-search">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              class="search-input" 
+              v-model="deviceSearch"
+              placeholder="搜索设备名称或编号"
+            />
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th width="60">
+                  <input 
+                    type="checkbox" 
+                    :checked="isAllDevicesSelected"
+                    @change="toggleAllDevices"
+                  />
+                </th>
+                <th width="100">设备编号</th>
+                <th>设备名称</th>
+                <th width="120">型号</th>
+                <th width="140">折旧单价 (元/小时)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="device in filteredDevices" :key="device.id">
+                <td>
+                  <input 
+                    type="checkbox" 
+                    :checked="isDeviceSelected(device.id)"
+                    @change="toggleDevice(device)"
+                  />
+                </td>
+                <td>{{ device.deviceId }}</td>
+                <td class="font-bold">{{ device.name }}</td>
+                <td>{{ device.model }}</td>
+                <td>¥{{ device.depreciationRate }}/小时</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" @click="deviceDialogVisible = false">取消</button>
+          <button type="button" class="btn btn-primary" @click="handleConfirmDevices">确认选择</button>
+        </div>
       </div>
-      <el-table :data="filteredDevices" @selection-change="handleDeviceSelection" max-height="400">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="deviceId" label="设备编号" width="100" />
-        <el-table-column prop="name" label="设备名称" />
-        <el-table-column prop="model" label="型号" width="120" />
-        <el-table-column prop="depreciationRate" label="折旧单价 (元/小时)" width="140" />
-      </el-table>
-      <template #footer>
-        <el-button @click="deviceDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleConfirmDevices">确认选择</el-button>
-      </template>
-    </el-dialog>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+<script setup>
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Plus, ArrowLeft } from '@element-plus/icons-vue'
-import type { FormInstance, FormRules } from 'element-plus'
 
 const router = useRouter()
-const formRef = ref<FormInstance>()
 const submitting = ref(false)
 
 // 表单数据
@@ -190,24 +258,28 @@ const form = reactive({
   startDate: ''
 })
 
-// 表单验证规则
-const rules: FormRules = {
-  name: [
-    { required: true, message: '请输入项目名称', trigger: 'blur' },
-    { min: 2, max: 200, message: '项目名称长度在 2-200 个字符', trigger: 'blur' }
-  ],
-  startDate: [
-    { required: true, message: '请选择开始日期', trigger: 'change' }
-  ]
-}
-
 // 已选择的人员和设备
-const selectedEmployees = ref<any[]>([])
-const selectedDevices = ref<any[]>([])
+const selectedEmployees = ref([])
+const selectedDevices = ref([])
 
 // 所有员工和设备（Mock）
-const allEmployees = ref<any[]>([])
-const allDevices = ref<any[]>([])
+const allEmployees = ref([
+  { id: 1, employeeId: 'EMP001', name: '张伟', type: 'formal', department: '研发部' },
+  { id: 2, employeeId: 'EMP002', name: '李娜', type: 'formal', department: '研发部' },
+  { id: 3, employeeId: 'EMP003', name: '王强', type: 'outsourcing', department: '外部合作' },
+  { id: 4, employeeId: 'EMP004', name: '赵敏', type: 'formal', department: '产品部' },
+  { id: 5, employeeId: 'EMP005', name: '孙磊', type: 'part_time', department: '设计部' },
+  { id: 6, employeeId: 'EMP006', name: '周杰', type: 'formal', department: '测试部' }
+])
+
+const allDevices = ref([
+  { id: 1, deviceId: 'DEV001', name: 'GPU 服务器 A', model: 'NVIDIA DGX', depreciationRate: '150.00' },
+  { id: 2, deviceId: 'DEV002', name: 'GPU 服务器 B', model: 'NVIDIA A100', depreciationRate: '120.00' },
+  { id: 3, deviceId: 'DEV003', name: 'MacBook Pro', model: 'M3 Max', depreciationRate: '8.00' },
+  { id: 4, deviceId: 'DEV004', name: '测试手机 iPhone15', model: 'iPhone 15 Pro', depreciationRate: '5.00' },
+  { id: 5, deviceId: 'DEV005', name: '测试平板', model: 'iPad Pro', depreciationRate: '3.00' },
+  { id: 6, deviceId: 'DEV006', name: '冲压机 A', model: 'XY-2000', depreciationRate: '45.00' }
+])
 
 // 对话框
 const employeeDialogVisible = ref(false)
@@ -216,8 +288,8 @@ const employeeSearch = ref('')
 const deviceSearch = ref('')
 
 // 临时选择
-const tempSelectedEmployees = ref<any[]>([])
-const tempSelectedDevices = ref<any[]>([])
+const tempSelectedEmployees = ref([])
+const tempSelectedDevices = ref([])
 
 // 筛选后的列表
 const filteredEmployees = computed(() => {
@@ -236,48 +308,84 @@ const filteredDevices = computed(() => {
   )
 })
 
-// Mock 数据
-const mockEmployees = [
-  { id: 1, employeeId: 'EMP001', name: '张伟', type: 'formal', department: '研发部' },
-  { id: 2, employeeId: 'EMP002', name: '李娜', type: 'formal', department: '研发部' },
-  { id: 3, employeeId: 'EMP003', name: '王强', type: 'outsourcing', department: '外部合作' },
-  { id: 4, employeeId: 'EMP004', name: '赵敏', type: 'formal', department: '产品部' },
-  { id: 5, employeeId: 'EMP005', name: '孙磊', type: 'part_time', department: '设计部' },
-  { id: 6, employeeId: 'EMP006', name: '周杰', type: 'formal', department: '测试部' }
-]
+// 检查是否全选
+const isAllEmployeesSelected = computed(() => {
+  return filteredEmployees.value.length > 0 && 
+    filteredEmployees.value.every(emp => tempSelectedEmployees.value.some(e => e.id === emp.id))
+})
 
-const mockDevices = [
-  { id: 1, deviceId: 'DEV001', name: 'GPU 服务器 A', model: 'NVIDIA DGX', depreciationRate: 150.00 },
-  { id: 2, deviceId: 'DEV002', name: 'GPU 服务器 B', model: 'NVIDIA A100', depreciationRate: 120.00 },
-  { id: 3, deviceId: 'DEV003', name: 'MacBook Pro', model: 'M3 Max', depreciationRate: 8.00 },
-  { id: 4, deviceId: 'DEV004', name: '测试手机 iPhone15', model: 'iPhone 15 Pro', depreciationRate: 5.00 },
-  { id: 5, deviceId: 'DEV005', name: '测试平板', model: 'iPad Pro', depreciationRate: 3.00 },
-  { id: 6, deviceId: 'DEV006', name: '冲压机 A', model: 'XY-2000', depreciationRate: 45.00 }
-]
+const isAllDevicesSelected = computed(() => {
+  return filteredDevices.value.length > 0 && 
+    filteredDevices.value.every(device => tempSelectedDevices.value.some(d => d.id === device.id))
+})
 
-// 工具函数
-const getEmployeeTypeTag = (type: string) => {
-  const tagMap: Record<string, any> = {
-    formal: '',
-    part_time: 'warning',
-    outsourcing: 'info'
+// 检查是否已选择
+const isEmployeeSelected = (id) => tempSelectedEmployees.value.some(e => e.id === id)
+const isDeviceSelected = (id) => tempSelectedDevices.value.some(d => d.id === id)
+
+// 切换选择
+const toggleEmployee = (emp) => {
+  if (isEmployeeSelected(emp.id)) {
+    tempSelectedEmployees.value = tempSelectedEmployees.value.filter(e => e.id !== emp.id)
+  } else {
+    tempSelectedEmployees.value.push(emp)
   }
-  return tagMap[type] || ''
 }
 
-const getEmployeeTypeText = (type: string) => {
-  const textMap: Record<string, string> = {
+const toggleDevice = (device) => {
+  if (isDeviceSelected(device.id)) {
+    tempSelectedDevices.value = tempSelectedDevices.value.filter(d => d.id !== device.id)
+  } else {
+    tempSelectedDevices.value.push(device)
+  }
+}
+
+// 全选/取消全选
+const toggleAllEmployees = () => {
+  if (isAllEmployeesSelected.value) {
+    tempSelectedEmployees.value = tempSelectedEmployees.value.filter(
+      emp => !filteredEmployees.value.some(e => e.id === emp.id)
+    )
+  } else {
+    filteredEmployees.value.forEach(emp => {
+      if (!isEmployeeSelected(emp.id)) {
+        tempSelectedEmployees.value.push(emp)
+      }
+    })
+  }
+}
+
+const toggleAllDevices = () => {
+  if (isAllDevicesSelected.value) {
+    tempSelectedDevices.value = tempSelectedDevices.value.filter(
+      device => !filteredDevices.value.some(d => d.id === device.id)
+    )
+  } else {
+    filteredDevices.value.forEach(device => {
+      if (!isDeviceSelected(device.id)) {
+        tempSelectedDevices.value.push(device)
+      }
+    })
+  }
+}
+
+// 工具函数
+const getTypeClass = (type) => {
+  const map = {
+    formal: 'type-formal',
+    part_time: 'type-part',
+    outsourcing: 'type-out'
+  }
+  return map[type] || ''
+}
+
+const getTypeText = (type) => {
+  const map = {
     formal: '正式',
     part_time: '兼职',
     outsourcing: '外包'
   }
-  return textMap[type] || type
-}
-
-// 加载数据
-const loadOptions = () => {
-  allEmployees.value = mockEmployees
-  allDevices.value = mockDevices
+  return map[type] || type
 }
 
 // 添加人员
@@ -286,17 +394,12 @@ const handleAddEmployee = () => {
   employeeDialogVisible.value = true
 }
 
-const handleEmployeeSelection = (selection: any[]) => {
-  tempSelectedEmployees.value = selection
-}
-
 const handleConfirmEmployees = () => {
   selectedEmployees.value = tempSelectedEmployees.value
-  ElMessage.success(`已选择 ${selectedEmployees.value.length} 名人员`)
   employeeDialogVisible.value = false
 }
 
-const handleRemoveEmployee = (id: number) => {
+const handleRemoveEmployee = (id) => {
   selectedEmployees.value = selectedEmployees.value.filter(e => e.id !== id)
 }
 
@@ -306,17 +409,12 @@ const handleAddDevice = () => {
   deviceDialogVisible.value = true
 }
 
-const handleDeviceSelection = (selection: any[]) => {
-  tempSelectedDevices.value = selection
-}
-
 const handleConfirmDevices = () => {
   selectedDevices.value = tempSelectedDevices.value
-  ElMessage.success(`已选择 ${selectedDevices.value.length} 台设备`)
   deviceDialogVisible.value = false
 }
 
-const handleRemoveDevice = (id: number) => {
+const handleRemoveDevice = (id) => {
   selectedDevices.value = selectedDevices.value.filter(d => d.id !== id)
 }
 
@@ -327,60 +425,61 @@ const handleBack = () => {
 
 // 提交
 const handleSubmit = async () => {
-  if (!formRef.value) return
+  // 验证
+  if (!form.name.trim()) {
+    alert('请输入项目名称')
+    return
+  }
+  if (!form.startDate) {
+    alert('请选择开始日期')
+    return
+  }
+  if (selectedEmployees.value.length === 0) {
+    alert('请至少选择一名项目人员')
+    return
+  }
 
-  await formRef.value.validate(async (valid) => {
-    if (!valid) return
-
-    if (selectedEmployees.value.length === 0) {
-      ElMessage.warning('请至少选择一名项目人员')
-      return
-    }
-
-    submitting.value = true
-    try {
-      // TODO: 调用 API
-      await new Promise(resolve => setTimeout(resolve, 800))
-      
-      ElMessage.success('项目创建成功')
-      router.push('/projects/list')
-    } catch (error) {
-      ElMessage.error('创建项目失败')
-    } finally {
-      submitting.value = false
-    }
-  })
+  submitting.value = true
+  try {
+    await new Promise(resolve => setTimeout(resolve, 800))
+    alert('项目创建成功')
+    router.push('/projects/list')
+  } catch (error) {
+    alert('创建项目失败')
+  } finally {
+    submitting.value = false
+  }
 }
-
-onMounted(() => {
-  loadOptions()
-})
 </script>
 
 <style scoped lang="scss">
 .project-create-page {
-  padding: 24px;
+  padding: 40px;
+  min-height: calc(100vh - 80px);
+  background: #f4f4f4;
 }
 
+// 返回导航
 .back-nav {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
+// 表单容器
 .form-container {
   max-width: 900px;
 }
 
 .form-card {
-  background: #fcfcfc;
+  background: white;
   border-radius: 12px;
-  padding: 32px;
+  padding: 40px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
   .card-header {
     margin-bottom: 32px;
 
     .page-title {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 600;
       color: #272b30;
       margin: 0 0 8px 0;
@@ -394,6 +493,7 @@ onMounted(() => {
   }
 }
 
+// 表单区块
 .form-section {
   margin-bottom: 32px;
 
@@ -410,20 +510,127 @@ onMounted(() => {
     color: #272b30;
     margin: 0;
   }
+
+  .section-divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin-bottom: 24px;
+  }
 }
 
+// 表单组
+.form-group {
+  margin-bottom: 24px;
+  position: relative;
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    color: #272b30;
+    margin-bottom: 8px;
+    font-weight: 500;
+
+    .required {
+      color: #ff4d4f;
+      margin-right: 2px;
+    }
+  }
+
+  .form-input,
+  .form-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #272b30;
+    background: white;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #252833;
+      box-shadow: 0 0 0 2px rgba(37, 40, 51, 0.1);
+    }
+
+    &::placeholder {
+      color: #9a9fa5;
+    }
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .input-count {
+    position: absolute;
+    right: 10px;
+    bottom: -20px;
+    font-size: 12px;
+    color: #9a9fa5;
+  }
+}
+
+// 已选列表
 .selected-list {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
 
-  .employee-tag,
-  .device-tag {
-    padding: 6px 12px;
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #52c41a;
+
+  .tag-close {
+    background: none;
+    border: none;
+    color: #52c41a;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(82, 196, 26, 0.2);
+    }
+  }
+
+  &.device-tag {
+    background: #fff7e6;
+    border-color: #ffe7ba;
+    color: #fa8c16;
+  }
+}
+
+// 空状态
+.empty-state {
+  padding: 32px;
+  text-align: center;
+  background: #fafafa;
+  border-radius: 8px;
+
+  .empty-text {
+    color: #9a9fa5;
     font-size: 14px;
   }
 }
 
+// 表单操作
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -433,7 +640,218 @@ onMounted(() => {
   border-top: 1px solid #f4f4f4;
 }
 
+// 对话框搜索
 .dialog-search {
   margin-bottom: 16px;
+  position: relative;
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #9a9fa5;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #272b30;
+    background: white;
+
+    &:focus {
+      outline: none;
+      border-color: #252833;
+    }
+  }
+}
+
+// 按钮
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .btn-icon {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  &.btn-primary {
+    background: #252833;
+    color: white;
+
+    &:hover {
+      background: #3d4152;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &.btn-outline {
+    background: white;
+    color: #272b30;
+    border: 1px solid #d9d9d9;
+
+    &:hover {
+      border-color: #252833;
+      color: #252833;
+    }
+  }
+
+  &.btn-link {
+    background: none;
+    border: none;
+    color: #1890ff;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+      color: #40a9ff;
+    }
+  }
+}
+
+// 弹窗
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  &.dialog-large {
+    max-width: 800px;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #f0f0f0;
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #272b30;
+    margin: 0;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #9a9fa5;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+
+    &:hover {
+      background: #f5f5f5;
+      color: #272b30;
+    }
+  }
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+// 表格
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: 14px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #595959;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+  }
+
+  td {
+    padding: 14px 12px;
+    font-size: 14px;
+    color: #272b30;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  tr:hover td {
+    background: #f5f5f5;
+  }
+
+  .font-bold {
+    font-weight: 600;
+  }
+
+  .type-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+
+    &.type-formal {
+      background: #f6ffed;
+      color: #52c41a;
+    }
+
+    &.type-part {
+      background: #fff7e6;
+      color: #fa8c16;
+    }
+
+    &.type-out {
+      background: #e6f7ff;
+      color: #1890ff;
+    }
+  }
 }
 </style>
